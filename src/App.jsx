@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Sidebar from "./components/Sidebar";
 import MapView from "./components/MapView";
 import "./App.css";
+import "./components/MapView.css";
 
 export default function App() {
   const [zones, setZones] = useState([]);
@@ -10,11 +11,15 @@ export default function App() {
   const [activeTab, setActiveTab] = useState("home");
 
   const [wards, setWards] = useState([]);
+  const [wardObjects, setWardObjects] = useState([]);
   const [wardQuery, setWardQuery] = useState("");
   const [selectedWard, setSelectedWard] = useState("");
 
   const [severity, setSeverity] = useState("LOW");
   const [description, setDescription] = useState("");
+
+  const [insights, setInsights] = useState([]);
+  const [loadingInsights, setLoadingInsights] = useState(false);
   const [reports, setReports] = useState([]);
 
   useEffect(() => {
@@ -22,7 +27,15 @@ export default function App() {
       .then((res) => res.json())
       .then(setZones);
 
-    fetch("/data/Delhi_Ward_Prop.geojson")
+    fetch("/data/wards_with_risk.geojson")
+      .then((res) => res.json())
+      .then((geojson) => {
+        const wardObjects = geojson.features
+          .map((f) => f.properties)
+        setWardObjects(wardObjects)
+      });
+
+    fetch("/data/wards_with_risk.geojson")
       .then((res) => res.json())
       .then((geojson) => {
         const wardNames = geojson.features
@@ -32,8 +45,35 @@ export default function App() {
       });
   }, []);
 
+  useEffect(() => {
+    if (!activeWard) return;
+
+    setLoadingInsights(true);
+    console.log(activeWard);
+
+    fetch("http://localhost:3001/api/insights", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ward: activeWard,
+        zones: zones.slice(0, 10) // optional: nearby zones later
+      })
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        setInsights(data.insights || []);
+      })
+      .catch(console.error)
+      .finally(() => setLoadingInsights(false));
+  }, [activeWard]);
+
+
   const filteredWards = wards.filter((w) =>
     w.toLowerCase().includes(wardQuery.toLowerCase())
+  );
+
+  const filteredWardObjects = wardObjects.filter((wardObj) =>
+    wardObj.WardName.toLowerCase().includes(wardQuery.toLowerCase())
   );
 
   const submitReport = () => {
@@ -57,6 +97,18 @@ export default function App() {
   setSeverity("LOW");
   setDescription("");
 };
+
+  useEffect(() => {
+    console.log("activeWard:", activeWard);
+  }, [activeWard]);
+
+  useEffect(() => {
+    console.log("wardObjects:", wardObjects);
+  }, [wardObjects]);
+
+  useEffect(() => {
+    console.log("wardQuery:", filteredWardObjects);
+  }, [filteredWardObjects]);
 
 
   return (
@@ -94,28 +146,110 @@ export default function App() {
               </div>
             </div>
 
+            <input
+                value={wardQuery}
+                onChange={(e) => {
+                  setWardQuery(e.target.value);
+                  setSelectedWard("");
+                }}
+                placeholder="Search ward"
+                className="input mb-2"
+                style={{width: 500}}
+              />
+
+{wardQuery && (
+                <div className="dropdown"
+                      style={{width:530}}
+                >
+                  {filteredWardObjects.map((ward) => (
+                    <div
+                      key={ward.Ward_No}
+                      onClick={() => {
+                        setActiveWard(ward)
+                        setWardQuery("")
+                      }}
+                      className="dropdown-item"
+                    >
+                      {ward.WardName}
+                    </div>
+                  ))}
+                </div>
+              )}
+
             <div className="map-wrapper">
               <MapView
                 zones={zones}
+                activeWard={activeWard}
                 onSelect={setActiveZone}
                 onWardSelect={setActiveWard}
               />
+
+              <div className="aiCardBox">
+                <div className="aiCardHeader">
+                  <h3 className="aiCardTitle">
+                    <span className="aiHighlight">Actionable</span> Insights
+                  </h3>
+
+                  <span className="aiGenerated">AI Generated</span>
+                </div>
+
+                {/* Empty content block */}
+                <div className="aiCardEmpty">
+                  {loadingInsights && <p>Generating insights...</p>}
+
+                  {!loadingInsights && insights.length === 0 && (
+                    <p>No insights yet. Select a ward.</p>
+                  )}
+
+                  {!loadingInsights &&
+                    insights.map((x, i) => (
+                      <div key={i} style={{ marginBottom: 12 }}>
+                        <b>{x.title}</b>
+                        <div style={{ fontSize: 13, color: "#64748b" }}>{x.subtitle}</div>
+                      </div>
+                    ))}
+                </div>
+              </div>
             </div>
 
-            {activeWard && (
-              <div className="card mb-4">
-                <div className="section-title">{activeWard.WardName}</div>
 
-                <div className="grid-info">
-                  <div>
-                    <div className="info-label">Ward No.</div>
-                    <div className="info-value">{activeWard.Ward_No}</div>
-                  </div>
 
-                  <div>
-                    <div className="info-label">Assembly</div>
-                    <div className="info-value">{activeWard.AC_Name}</div>
-                  </div>
+            {/* Ward info */}
+            {activeWard &&
+              (() => {
+                const MAX_POP = 100000;
+                const MAX_RISK = 100;
+                const risk = Number(activeWard.composite_risk_score_100 || 0)
+                const pop = Number(activeWard.TotalPop || 0);
+                const percent = Math.min((pop / MAX_POP) * 100, 100);
+                const riskPercent = Math.min((risk / MAX_RISK) * 100, 100)
+
+
+                const barClass =
+                  percent >= 80
+                    ? "fill-red"
+                    : percent >= 50
+                      ? "fill-orange"
+                      : "fill-green";
+
+                return (
+                  <div className="card mb-4">
+                    <div className="section-title">{activeWard.WardName}</div>
+
+                    <div className="grid-info">
+                      <div>
+                        <div className="info-label">Ward No.</div>
+                        <div className="info-value">{activeWard.Ward_No}</div>
+                        <div className="info-label">Drain score</div>
+                        <div className="info-value">{activeWard.drain_score * 10}</div>
+                        <div className="info-label">Drain density</div>
+                        <div className="info-value">{activeWard.drain_density * 1000}</div>
+                      </div>
+
+                      <div>
+                        <div className="info-label">Ward Name</div>
+                        <div className="info-value">{activeWard.WardName}</div>
+                      </div>
 
                   <div style={{ gridColumn: "1 / -1" }}>
                     <div className="pop-row">
@@ -126,21 +260,32 @@ export default function App() {
                       </strong>
                     </div>
 
-                    <div className="progress-bg">
-                      <div
-                        className="progress-fill fill-orange"
-                        style={{
-                          width: `${Math.min(
-                            (Number(activeWard.TotalPop || 0) / 100000) * 100,
-                            100
-                          )}%`,
-                        }}
-                      />
+                        <div className="progress-bg">
+                          <div
+                            className={`progress-fill ${barClass}`}
+                            style={{ width: `${percent}%` }}
+                          />
+                        </div>
+                      </div>
+                      <div style={{ gridColumn: "1 / -1" }}>
+                        <div className="risk-row">
+                          <span>Risk</span>
+                          <strong>
+                            {risk.toLocaleString()} / {MAX_RISK.toLocaleString()}
+                          </strong>
+                        </div>
+
+                        <div className="progress-bg">
+                          <div
+                            className={`progress-fill ${barClass}`}
+                            style={{ width: `${riskPercent}%` }}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            )}
+                );
+              })()}
           </>
         )}
 
@@ -210,7 +355,7 @@ export default function App() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe the waterlogging situation"
-                className="textarea mb-4"
+                className="textarea mb-4 "
               />
 
               <button onClick={submitReport} className="btn-primary">
