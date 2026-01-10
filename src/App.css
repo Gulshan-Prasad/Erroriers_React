@@ -1,0 +1,219 @@
+/* ---------- App Layout ---------- */
+.app {
+  min-height: 100vh;
+  display: flex;
+  background: var(--bg);
+}
+
+/* Main content area */
+.main {
+  flex: 1;
+  padding: 24px;
+}
+
+/* ---------- Typography ---------- */
+.page-title {
+  font-size: 24px;
+  font-weight: 650;
+  margin-bottom: 16px;
+  color: #0f172a;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 650;
+  margin-bottom: 16px;
+  color: #0f172a;
+}
+
+.text-muted {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ---------- Panels / Cards ---------- */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.card.no-padding {
+  padding: 0;
+}
+
+.card.mb-4 {
+  margin-bottom: 16px;
+}
+
+.card.mb-6 {
+  margin-bottom: 24px;
+}
+
+.card-text {
+  font-size: 14px;
+  color: #0f172a;
+}
+
+/* Map container wrapper */
+.map-wrapper {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+/* ---------- Grid ---------- */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.grid-info {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .grid-info {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Info blocks ---------- */
+.info-label {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+.info-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* ---------- Report Form ---------- */
+.input,
+.select,
+.textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  outline: none;
+  font-size: 14px;
+  background: white;
+  color: #0f172a;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.mb-2 {
+  margin-bottom: 8px;
+}
+.mb-3 {
+  margin-bottom: 12px;
+}
+.mb-4 {
+  margin-bottom: 16px;
+}
+
+.dropdown {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  max-height: 160px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+  background: white;
+}
+
+.dropdown-item {
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.dropdown-item:hover {
+  background: #f1f5f9;
+}
+
+/* ---------- Buttons ---------- */
+.btn-primary {
+  background: var(--secondary);
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 650;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.btn-primary:hover {
+  opacity: 0.92;
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+/* ---------- Population bar ---------- */
+.pop-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--muted);
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.pop-row strong {
+  color: #334155;
+  font-weight: 650;
+}
+
+.progress-bg {
+  width: 100%;
+  height: 12px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+.fill-green {
+  background: #22c55e;
+}
+
+.fill-orange {
+  background: #fb923c;
+}
+
+.fill-red {
+  background: #ef4444;
+}
