@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, GeoJSON, Pane } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, Pane, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "./MapView.css";
 
@@ -33,14 +33,6 @@ function getRiskColor(risk){
   return "#78350f"; // brown
 }
 
-function getRiskColor(risk){
-  if (risk <= 0.2 *100) return "#22c55e"; // green
-  if (risk <= 0.4 *100) return "#eab308"; // yellow
-  if (risk <= 0.6*100) return "#f97316"; // orange
-  if (risk <= 0.8*100) return "#ef4444"; // red
-  return "#78350f"; // brown
-}
-
 function darkenRgb(rgb, factor = 0.75) {
   const match = rgb.match(/\d+/g);
   if (!match) return rgb;
@@ -51,12 +43,36 @@ function darkenRgb(rgb, factor = 0.75) {
   )})`;
 }
 
+function MapController({ activeWard, wardLayersRef, setSelectedId }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!activeWard || !wardLayersRef.current.length) return;
+
+    const match = wardLayersRef.current.find(
+      (w) => w.feature.properties.WardName === activeWard.WardName
+    );
+
+    if (!match) return;
+
+    map.fitBounds(match.layer.getBounds(), {
+      padding: [40, 40],
+    });
+
+    setSelectedId(match.id);
+  }, [activeWard, map]);
+
+  return null;
+}
+
 export default function MapView({ activeWard, onWardSelect }) {
+console.log("MapView render, activeWard:", activeWard);
+
   const [wards, setWards] = useState(null);
   const [selectedWard, setSelectedWard] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
-  const mapRef = useRef(null);
   const wardLayersRef = useRef([]);
+  const [layersReady, setLayersReady] = useState(false);
 
 
 
@@ -66,34 +82,9 @@ export default function MapView({ activeWard, onWardSelect }) {
       .then((data) =>{
         wardLayersRef.current = [];
         setWards(data);
+        setLayersReady(true);
       });
   }, []);
-
-  useEffect(() => {
-    if (!activeWard || !mapRef.current || !wardLayersRef.current.length) return;
-
-    const match = wardLayersRef.current.find(
-      (w) => w.feature.properties.WardName === activeWard.WardName
-    );
-
-    if (!match) return;
-
-    const { layer, id, feature } = match;
-
-    // zoom to ward
-    mapRef.current.fitBounds(layer.getBounds(), {
-      padding: [40, 40],
-    });
-
-    // simulate click behavior
-    setSelectedId(id);
-    onWardSelect?.(feature.properties);
-
-    layer.setStyle({
-      weight: 4,
-      fillOpacity: 0.35,
-    });
-  }, [activeWard]);
 
 
   const defaultStyle = {
@@ -103,37 +94,50 @@ export default function MapView({ activeWard, onWardSelect }) {
     fillOpacity: 0.25,
   };
 
+  useEffect(()=>{
+    console.log("selectID: ", selectedId)
+  },[selectedId])
+
   return (
     <div className="mapRow">
         <MapContainer 
         center={[28.6139, 77.209]} 
         zoom={11} 
         className="map"
-        whenCreated={(map) => {mapRef.current = map;}}
         >
         <Pane name="wards" style={{ zIndex: 200 }} />
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
         {wards && (
             <GeoJSON
+            key={selectedId}
             data={wards}
             pane="wards"
             interactive={true}
             style={(feature) => {
-              const id = feature?.properties?.FID;
+              const id = Number(feature?.properties?.Ward_No);
               const pop = Number(feature?.properties?.TotalPop || 0);
               const risk = Number(feature?.properties?.composite_risk_score_100 || 0);
               // const fillColor = getPopColor(pop);
               const fillColor = getRiskColor(risk)
+              if (id === selectedId) {
+                  return {
+                    ...defaultStyle,
+                    fillColor,
+                    color: "#000000", // black border
+                    weight: 4,
+                    fillOpacity: 0.4,
+                  };
+                }
 
                 return {
                 ...defaultStyle,
                 fillColor,
-                weight: id === selectedId ? 4 : 1,
+                weight: 1,
                 };
             }}
             onEachFeature={(feature, layer) => {
-              const id = feature.properties?.FID;
+              const id = Number(feature?.properties?.Ward_No);
               const pop = Number(feature?.properties?.TotalPop || 0);
               const risk = Number(feature?.properties?.composite_risk_score_100 || 0);
               // const fillColor = getPopColor(pop);
@@ -147,18 +151,22 @@ export default function MapView({ activeWard, onWardSelect }) {
 
                 layer.on({
                 mouseover: (e) => {
+                    if (id === selectedId) return;
+
                     const target = e.target;
 
                     if (id !== selectedId) {
                     target.setStyle({
                         fillColor: darkenRgb(fillColor, 0.65),
-                        fillOpacity: 0.65,
-                        weight: 2,
+                        fillOpacity: 0.25,
+                        weight: 1,
                     });
                     }
                 },
 
                 mouseout: (e) => {
+                    if (id === selectedId) return;
+
                     const target = e.target;
 
                     target.setStyle({
@@ -174,14 +182,19 @@ export default function MapView({ activeWard, onWardSelect }) {
 
                     e.target.setStyle({
                     fillColor,
-                    fillOpacity: 0.35,
-                    weight: 4,
+                    fillOpacity: 0.45,
+                    weight: 2,
                     });
                 },
                 });
             }}
             />
         )}
+        <MapController
+            activeWard={activeWard}
+            wardLayersRef={wardLayersRef}
+            setSelectedId={setSelectedId}
+          />
         </MapContainer>
     </div>
     );

@@ -3,6 +3,7 @@ import Sidebar from "./components/Sidebar";
 import MapView from "./components/MapView";
 import "./App.css";
 import "./components/MapView.css";
+import { averageGeoJsonProperty, preparednessIndex } from "./utils/functions";
 
 export default function App() {
   const [zones, setZones] = useState([]);
@@ -23,10 +24,6 @@ export default function App() {
   const [reports, setReports] = useState([]);
 
   useEffect(() => {
-    fetch("/data/water_logging_spots.json")
-      .then((res) => res.json())
-      .then(setZones);
-
     fetch("/data/wards_with_risk.geojson")
       .then((res) => res.json())
       .then((geojson) => {
@@ -49,7 +46,6 @@ export default function App() {
     if (!activeWard) return;
 
     setLoadingInsights(true);
-    console.log(activeWard);
 
     fetch("http://localhost:3001/api/insights", {
       method: "POST",
@@ -110,7 +106,17 @@ export default function App() {
     console.log("wardQuery:", filteredWardObjects);
   }, [filteredWardObjects]);
 
+  const avgRisk = Math.floor(wardObjects.reduce((sum, w) => sum + (Number(w.composite_risk_score_100) || 0), 0)/ wards.length);
 
+  const avgRainfall = Math.floor(wardObjects.reduce((sum, w) => sum +(Number(w.ward_rainfall_avg_rainfall_mm) || 0), 0)/ wards.length)
+
+  const criticalWards = wardObjects.filter(
+  (w) => Number(w.composite_risk_score_100) > 75
+).length;
+
+  const prepIndex = preparednessIndex(wardObjects)
+
+  console.log(prepIndex)
   return (
     <div className="app">
       <Sidebar activeTab={activeTab} onChange={setActiveTab} />
@@ -123,29 +129,29 @@ export default function App() {
             <div className="statsGrid">
               <div className="statCard">
                 <div className="statLabel">Average WLPI</div>
-                <div className="statValue">63.0</div>
-                <div className="statSub red">↑ 2.4%</div>
+                <div className="statValue">{avgRisk}</div>
+                {/* <div className="statSub red">↑ 2.4%</div> */}
               </div>
 
               <div className="statCard">
                 <div className="statLabel">Critical Wards</div>
-                <div className="statValue">1</div>
-                <div className="statSub">Needs attention</div>
+                <div className="statValue">{criticalWards}</div>
+                {/* <div className="statSub">Needs attention</div> */}
               </div>
 
               <div className="statCard">
-                <div className="statLabel">Rainfall</div>
-                <div className="statValue">12.5 mm</div>
-                <div className="statSub">Forecast: 0mm</div>
+                <div className="statLabel">Avg Rainfall (june-aug)</div>
+                <div className="statValue">{avgRainfall} mm</div>
+                {/* <div className="statSub">Forecast: 0mm</div> */}
               </div>
 
               <div className="statCard">
-                <div className="statLabel">Preparedness</div>
-                <div className="statValue green">78%</div>
-                <div className="statSub green">↑ 5%</div>
+                <div className="statLabel">Preparedness (0-100)</div>
+                <div className="statValue green">{prepIndex}</div>
+                {/* <div className="statSub green">↑ 5%</div> */}
               </div>
             </div>
-
+<div className="ward-search-wrapper">
             <input
                 value={wardQuery}
                 onChange={(e) => {
@@ -154,12 +160,14 @@ export default function App() {
                 }}
                 placeholder="Search ward"
                 className="input mb-2"
-                style={{width: 500}}
+                style={{width: 500,
+                  position: "relative"
+                }}
               />
 
 {wardQuery && (
                 <div className="dropdown"
-                      style={{width:530}}
+                      style={{position:"absolute"}}
                 >
                   {filteredWardObjects.map((ward) => (
                     <div
@@ -175,7 +183,7 @@ export default function App() {
                   ))}
                 </div>
               )}
-
+</div>
             <div className="map-wrapper">
               <MapView
                 zones={zones}
@@ -221,16 +229,12 @@ export default function App() {
                 const MAX_RISK = 100;
                 const risk = Number(activeWard.composite_risk_score_100 || 0)
                 const pop = Number(activeWard.TotalPop || 0);
-                const percent = Math.min((pop / MAX_POP) * 100, 100);
-                const riskPercent = Math.min((risk / MAX_RISK) * 100, 100)
+                const popPercent = Math.min((pop / MAX_POP) * 100, 100);
+                const percent = Math.min((risk / MAX_RISK) * 100, 100)
 
 
                 const barClass =
-                  percent >= 80
-                    ? "fill-red"
-                    : percent >= 50
-                      ? "fill-orange"
-                      : "fill-green";
+                  percent >= 80 ? "fill-red" : percent >= 60 ? "fill-orange" : percent >=40? "fill-yellow" : "fill-green";
 
                 return (
                   <div className="card mb-4">
@@ -243,7 +247,7 @@ export default function App() {
                         <div className="info-label">Drain score</div>
                         <div className="info-value">{activeWard.drain_score * 10}</div>
                         <div className="info-label">Drain density</div>
-                        <div className="info-value">{activeWard.drain_density * 1000}</div>
+                        <div className="info-value">{(activeWard.drain_density * 1000).toPrecision(4)} km/km^2</div>
                       </div>
 
                       <div>
@@ -251,7 +255,7 @@ export default function App() {
                         <div className="info-value">{activeWard.WardName}</div>
                       </div>
 
-                  <div style={{ gridColumn: "1 / -1" }}>
+                  {/* <div style={{ gridColumn: "1 / -1" }}>
                     <div className="pop-row">
                       <span>Population</span>
                       <strong>
@@ -266,7 +270,7 @@ export default function App() {
                             style={{ width: `${percent}%` }}
                           />
                         </div>
-                      </div>
+                      </div> */}
                       <div style={{ gridColumn: "1 / -1" }}>
                         <div className="risk-row">
                           <span>Risk</span>
@@ -278,7 +282,7 @@ export default function App() {
                         <div className="progress-bg">
                           <div
                             className={`progress-fill ${barClass}`}
-                            style={{ width: `${riskPercent}%` }}
+                            style={{ width: `${percent}%` }}
                           />
                         </div>
                       </div>

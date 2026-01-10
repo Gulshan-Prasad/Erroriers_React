@@ -165,6 +165,11 @@
   pointer-events: none;
 }
 
+.ward-search-wrapper {
+  position: relative; 
+  width: 500px;
+}
+
 .dropdown {
   position: absolute;
   top: calc(100% + 6px);
@@ -175,7 +180,7 @@
   max-height: 160px;
   overflow-y: auto;
   background: white;
-  z-index: 50;
+  z-index: 10000;
 }
 
 .dropdown-item {
@@ -208,7 +213,7 @@
   transform: scale(0.98);
 }
 
-.pop-row {
+.risk-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -217,7 +222,7 @@
   font-size: 13px;
 }
 
-.pop-row strong {
+.risk-row strong {
   color: #334155;
   font-weight: 650;
 }
@@ -238,6 +243,10 @@
 
 .fill-green {
   background: #22c55e;
+}
+
+.fill-yellow {
+  background: #ffe11f
 }
 
 .fill-orange {
@@ -324,7 +333,7 @@
   padding: 22px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  /* justify-content: space-around; */
   min-height: 140px;
 }
 .statLabel {
@@ -335,6 +344,7 @@
 .statValue {
   font-size: 26px;
   font-weight: 800;
+  padding-top: 45px;
 }
 
 .statSub {
