@@ -5,7 +5,6 @@ import "./MapView.css";
 import L from "leaflet";
 import { useEffect, useState } from "react";
 
-/* Fix Leaflet marker icons */
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -14,13 +13,12 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-// data based ward color
 const MAX_POP = 100000;
 
 function getPopColor(pop) {
   const p = Math.min(pop / MAX_POP, 1);
 
-  if (p <= 0.2) return "#22c55e"; // green
+  if (p <= 0.2) return "#22c55e"; 
   if (p <= 0.4) return "#eab308"; // yellow
   if (p <= 0.6) return "#f97316"; // orange
   if (p <= 0.8) return "#ef4444"; // red

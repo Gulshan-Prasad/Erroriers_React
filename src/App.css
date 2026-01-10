@@ -1,17 +1,14 @@
-/* ---------- App Layout ---------- */
 .app {
   min-height: 100vh;
   display: flex;
   background: var(--bg);
 }
 
-/* Main content area */
 .main {
   flex: 1;
   padding: 24px;
 }
 
-/* ---------- Typography ---------- */
 .page-title {
   font-size: 24px;
   font-weight: 650;
@@ -31,7 +28,6 @@
   font-size: 14px;
 }
 
-/* ---------- Panels / Cards ---------- */
 .card {
   background: var(--panel);
   border: 1px solid var(--border);
@@ -56,7 +52,6 @@
   color: #0f172a;
 }
 
-/* Map container wrapper */
 .map-wrapper {
   background: var(--panel);
   border: 1px solid var(--border);
@@ -65,7 +60,6 @@
   margin-bottom: 16px;
 }
 
-/* ---------- Grid ---------- */
 .grid-2 {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -87,7 +81,6 @@
   }
 }
 
-/* ---------- Info blocks ---------- */
 .info-label {
   font-size: 13px;
   color: var(--muted);
@@ -100,11 +93,11 @@
   color: #0f172a;
 }
 
-/* ---------- Report Form ---------- */
 .input,
 .select,
 .textarea {
   width: 100%;
+  box-sizing: border-box;
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 10px 12px;
@@ -129,21 +122,46 @@
 .mb-2 {
   margin-bottom: 8px;
 }
+
 .mb-3 {
   margin-bottom: 12px;
 }
+
 .mb-4 {
   margin-bottom: 16px;
 }
 
+.inputWrap {
+  position: relative;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.input-with-icon {
+  padding-left: 36px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #64748b;
+  pointer-events: none;
+}
+
 .dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
   border: 1px solid var(--border);
   border-radius: 10px;
-  overflow: hidden;
   max-height: 160px;
   overflow-y: auto;
-  margin-bottom: 12px;
   background: white;
+  z-index: 50;
 }
 
 .dropdown-item {
@@ -156,7 +174,6 @@
   background: #f1f5f9;
 }
 
-/* ---------- Buttons ---------- */
 .btn-primary {
   background: var(--secondary);
   color: white;
@@ -177,7 +194,6 @@
   transform: scale(0.98);
 }
 
-/* ---------- Population bar ---------- */
 .pop-row {
   display: flex;
   justify-content: space-between;
@@ -218,7 +234,6 @@
   background: #ef4444;
 }
 
-/* ---------- HISTORY TAB IMPROVEMENTS ---------- */
 .history {
   display: flex;
   flex-direction: column;
@@ -261,6 +276,26 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
 }
+.severity-low {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.severity-medium {
+  color: #f59e0b;
+  font-weight: 700;
+}
+
+.severity-high {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.status-pending {
+  color: #fb940e;
+  font-weight: 700;
+}
+
 
 @media (max-width: 520px) {
   .historyDetails {

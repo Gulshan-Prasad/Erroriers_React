@@ -15,6 +15,7 @@ export default function App() {
 
   const [severity, setSeverity] = useState("LOW");
   const [description, setDescription] = useState("");
+  const [reports, setReports] = useState([]);
 
   useEffect(() => {
     fetch("/data/water_logging_spots.json")
@@ -27,7 +28,6 @@ export default function App() {
         const wardNames = geojson.features
           .map((f) => f.properties?.WardName)
           .filter(Boolean);
-
         setWards(wardNames);
       });
   }, []);
@@ -37,14 +37,27 @@ export default function App() {
   );
 
   const submitReport = () => {
-    if (!selectedWard || !description) return;
+  if (!selectedWard || !description) return;
 
-    alert("Report submitted successfully");
-    setSelectedWard("");
-    setWardQuery("");
-    setSeverity("LOW");
-    setDescription("");
-  };
+  setReports((prev) => [
+    {
+      id: Date.now(),
+      ward: selectedWard,
+      severity,
+      status: "Pending",
+      time: new Date().toLocaleString()
+    },
+    ...prev
+  ]);
+
+  alert("Report submitted successfully");
+
+  setSelectedWard("");
+  setWardQuery("");
+  setSeverity("LOW");
+  setDescription("");
+};
+
 
   return (
     <div className="app">
@@ -53,7 +66,6 @@ export default function App() {
       <main className="main">
         <h1 className="page-title">Urban Waterlogging Dashboard</h1>
 
-        {/* ---------------- HOME TAB ---------------- */}
         {activeTab === "home" && (
           <>
             <div className="card mb-6 card-text">
@@ -70,110 +82,99 @@ export default function App() {
               />
             </div>
 
-            {activeZone && (
+            {activeWard && (
               <div className="card mb-4">
-                <div className="section-title">{activeZone.name}</div>
+                <div className="section-title">{activeWard.WardName}</div>
 
                 <div className="grid-info">
                   <div>
-                    <div className="info-label">Severity</div>
-                    <div className="info-value">{activeZone.severity}</div>
+                    <div className="info-label">Ward No.</div>
+                    <div className="info-value">{activeWard.Ward_No}</div>
                   </div>
 
                   <div>
-                    <div className="info-label">Coordinates</div>
-                    <div className="info-value">
-                      {activeZone.lat}, {activeZone.lng}
+                    <div className="info-label">Assembly</div>
+                    <div className="info-value">{activeWard.AC_Name}</div>
+                  </div>
+
+                  <div style={{ gridColumn: "1 / -1" }}>
+                    <div className="pop-row">
+                      <span>Population</span>
+                      <strong>
+                        {Number(activeWard.TotalPop || 0).toLocaleString()} /
+                        100,000
+                      </strong>
+                    </div>
+
+                    <div className="progress-bg">
+                      <div
+                        className="progress-fill fill-orange"
+                        style={{
+                          width: `${Math.min(
+                            (Number(activeWard.TotalPop || 0) / 100000) * 100,
+                            100
+                          )}%`,
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
               </div>
             )}
-
-            {/* Ward info */}
-            {activeWard &&
-              (() => {
-                const MAX_POP = 100000;
-                const pop = Number(activeWard.TotalPop || 0);
-                const percent = Math.min((pop / MAX_POP) * 100, 100);
-
-                const barClass =
-                  percent >= 80
-                    ? "fill-red"
-                    : percent >= 50
-                    ? "fill-orange"
-                    : "fill-green";
-
-                return (
-                  <div className="card mb-4">
-                    <div className="section-title">{activeWard.WardName}</div>
-
-                    <div className="grid-info">
-                      <div>
-                        <div className="info-label">Ward No.</div>
-                        <div className="info-value">{activeWard.Ward_No}</div>
-                      </div>
-
-                      <div>
-                        <div className="info-label">Ward Name</div>
-                        <div className="info-value">{activeWard.WardName}</div>
-                      </div>
-
-                      {/* Population Bar */}
-                      <div style={{ gridColumn: "1 / -1" }}>
-                        <div className="pop-row">
-                          <span>Population</span>
-                          <strong>
-                            {pop.toLocaleString()} / {MAX_POP.toLocaleString()}
-                          </strong>
-                        </div>
-
-                        <div className="progress-bg">
-                          <div
-                            className={`progress-fill ${barClass}`}
-                            style={{ width: `${percent}%` }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })()}
           </>
         )}
 
-        {/* ---------------- REPORT TAB ---------------- */}
         {activeTab === "report" && (
           <div className="grid-2">
             <div className="card">
               <h2 className="section-title">Submit Waterlogging Report</h2>
 
-              <input
-                value={wardQuery}
-                onChange={(e) => {
-                  setWardQuery(e.target.value);
-                  setSelectedWard("");
-                }}
-                placeholder="Search ward"
-                className="input mb-2"
-              />
+              <div className="inputWrap">
+                <span className="searchIcon">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                </span>
 
-              {wardQuery && (
-                <div className="dropdown">
-                  {filteredWards.map((ward) => (
-                    <div
-                      key={ward}
-                      onClick={() => {
-                        setSelectedWard(ward);
-                        setWardQuery(ward);
-                      }}
-                      className="dropdown-item"
-                    >
-                      {ward}
-                    </div>
-                  ))}
-                </div>
-              )}
+                <input
+                  className="input input-with-icon"
+                  value={wardQuery}
+                  onChange={(e) => {
+                    setWardQuery(e.target.value);
+                    setSelectedWard("");
+                  }}
+                  placeholder="Search ward"
+                />
+
+                {wardQuery &&
+                  filteredWards.length > 0 &&
+                  !filteredWards.includes(wardQuery) && (
+                  <div className="dropdown">
+                    {filteredWards.map((ward) => (
+                      <div
+                        key={ward}
+                        className="dropdown-item"
+                        onClick={() => {
+                          setSelectedWard(ward);
+                          setWardQuery(ward);
+                        }}
+                      >
+                        {ward}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
 
               <select
                 value={severity}
@@ -199,12 +200,38 @@ export default function App() {
 
             <div className="card">
               <h2 className="section-title">Active Reports</h2>
-              <p className="text-muted">No active reports submitted yet.</p>
+              {reports.length === 0 ? (
+                <p className="text-muted">No active reports submitted yet.</p>
+               ) : (
+                 reports.map((r) => (
+                   <div key={r.id} className="card mb-3">
+                     <div className="section-title">{r.ward}</div>
+
+                     <div className="grid-info">
+                       <div>
+                         <div className="info-label">Severity</div>
+                         <div className={`info-value severity-${r.severity.toLowerCase()}`}>
+                           {r.severity}
+                         </div>
+                       </div>
+
+                       <div>
+                         <div className="info-label">Status</div>
+                         <div className={`info-value status-${r.status.toLowerCase()}`}>
+                           {r.status}
+                         </div>
+                       </div>
+                     </div>
+
+                     <div className="text-muted">{r.time}</div>
+                   </div>
+                 ))
+               )}
+
             </div>
           </div>
         )}
 
-        {/* ---------------- HISTORY TAB ---------------- */}
         {activeTab === "history" && (
           <div className="history">
             <div className="map-wrapper">
@@ -216,63 +243,34 @@ export default function App() {
             </div>
 
             <div className="historyGrid">
-              {/* Zone Card */}
               <div className="card">
                 <h2 className="section-title">Selected Flood Zone</h2>
-
                 {!activeZone ? (
                   <p className="text-muted">Click any flood zone on the map.</p>
                 ) : (
                   <>
                     <div className="historyTitle">{activeZone.name}</div>
                     <div className="historyBadge">{activeZone.severity}</div>
-
-                    <div className="historyDetails">
-                      <div>
-                        <div className="info-label">Latitude</div>
-                        <div className="info-value">{activeZone.lat}</div>
-                      </div>
-                      <div>
-                        <div className="info-label">Longitude</div>
-                        <div className="info-value">{activeZone.lng}</div>
-                      </div>
-                    </div>
                   </>
                 )}
               </div>
 
-              {/* Ward Card */}
               <div className="card">
                 <h2 className="section-title">Selected Ward</h2>
-
                 {!activeWard ? (
                   <p className="text-muted">Click any ward on the map.</p>
                 ) : (
                   <>
                     <div className="historyTitle">{activeWard.WardName}</div>
-
                     <div className="historyDetails">
                       <div>
                         <div className="info-label">Ward No.</div>
                         <div className="info-value">{activeWard.Ward_No}</div>
                       </div>
-
-                      <div>
-                        <div className="info-label">Assembly</div>
-                        <div className="info-value">{activeWard.AC_Name}</div>
-                      </div>
-
                       <div>
                         <div className="info-label">Population</div>
                         <div className="info-value">
                           {Number(activeWard.TotalPop || 0).toLocaleString()}
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="info-label">SC Population</div>
-                        <div className="info-value">
-                          {Number(activeWard.SC_Pop || 0).toLocaleString()}
                         </div>
                       </div>
                     </div>
@@ -282,7 +280,6 @@ export default function App() {
             </div>
           </div>
         )}
-
       </main>
     </div>
   );
