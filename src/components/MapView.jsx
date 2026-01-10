@@ -27,6 +27,14 @@ function getPopColor(pop) {
   return "#78350f"; // brown
 }
 
+function getRiskColor(risk){
+  if (risk <= 0.2 *100) return "#22c55e"; // green
+  if (risk <= 0.4 *100) return "#eab308"; // yellow
+  if (risk <= 0.6*100) return "#f97316"; // orange
+  if (risk <= 0.8*100) return "#ef4444"; // red
+  return "#78350f"; // brown
+}
+
 // darken any rgb() color by factor
 function darkenRgb(rgb, factor = 0.75) {
   const match = rgb.match(/\d+/g);
@@ -44,7 +52,7 @@ export default function MapView({ onWardSelect }) {
   const [selectedId, setSelectedId] = useState(null);
 
   useEffect(() => {
-    fetch("/data/Delhi_Ward_Prop.geojson")
+    fetch("/data/wards_with_risk.geojson")
       .then((res) => res.json())
       .then(setWards);
   }, []);
@@ -75,7 +83,9 @@ export default function MapView({ onWardSelect }) {
             style={(feature) => {
               const id = feature?.properties?.FID;
               const pop = Number(feature?.properties?.TotalPop || 0);
-              const fillColor = getPopColor(pop);
+              const risk = Number(feature?.properties?.composite_risk_score_100 || 0);
+              // const fillColor = getPopColor(pop);
+              const fillColor = getRiskColor(risk)
 
               return {
                 ...defaultStyle,
@@ -86,7 +96,9 @@ export default function MapView({ onWardSelect }) {
             onEachFeature={(feature, layer) => {
               const id = feature.properties?.FID;
               const pop = Number(feature?.properties?.TotalPop || 0);
-              const fillColor = getPopColor(pop);
+              const risk = Number(feature?.properties?.composite_risk_score_100 || 0);
+              // const fillColor = getPopColor(pop);
+              const fillColor = getRiskColor(risk)
 
               layer.on({
                 mouseover: (e) => {
