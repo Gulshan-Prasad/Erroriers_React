@@ -206,7 +206,7 @@ export default function App() {
 
         {/* ---------------- HISTORY TAB ---------------- */}
         {activeTab === "history" && (
-          <>
+          <div className="history">
             <div className="map-wrapper">
               <MapView
                 zones={zones}
@@ -215,39 +215,74 @@ export default function App() {
               />
             </div>
 
-            {activeZone && (
-              <div className="card mb-4">
-                <div className="section-title">{activeZone.name}</div>
-                <p className="text-muted">
-                  Historical waterlogging severity: {activeZone.severity}
-                </p>
+            <div className="historyGrid">
+              {/* Zone Card */}
+              <div className="card">
+                <h2 className="section-title">Selected Flood Zone</h2>
+
+                {!activeZone ? (
+                  <p className="text-muted">Click any flood zone on the map.</p>
+                ) : (
+                  <>
+                    <div className="historyTitle">{activeZone.name}</div>
+                    <div className="historyBadge">{activeZone.severity}</div>
+
+                    <div className="historyDetails">
+                      <div>
+                        <div className="info-label">Latitude</div>
+                        <div className="info-value">{activeZone.lat}</div>
+                      </div>
+                      <div>
+                        <div className="info-label">Longitude</div>
+                        <div className="info-value">{activeZone.lng}</div>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
-            )}
 
-            {activeWard && (
-              <div className="card mb-4">
-                <div className="section-title">{activeWard.WardName}</div>
+              {/* Ward Card */}
+              <div className="card">
+                <h2 className="section-title">Selected Ward</h2>
 
-                <div className="grid-info">
-                  <div>
-                    <div className="info-label">Ward No.</div>
-                    <div className="info-value">{activeWard.Ward_No}</div>
-                  </div>
+                {!activeWard ? (
+                  <p className="text-muted">Click any ward on the map.</p>
+                ) : (
+                  <>
+                    <div className="historyTitle">{activeWard.WardName}</div>
 
-                  <div>
-                    <div className="info-label">Assembly</div>
-                    <div className="info-value">{activeWard.AC_Name}</div>
-                  </div>
+                    <div className="historyDetails">
+                      <div>
+                        <div className="info-label">Ward No.</div>
+                        <div className="info-value">{activeWard.Ward_No}</div>
+                      </div>
 
-                  <div>
-                    <div className="info-label">Population</div>
-                    <div className="info-value">{activeWard.TotalPop}</div>
-                  </div>
-                </div>
+                      <div>
+                        <div className="info-label">Assembly</div>
+                        <div className="info-value">{activeWard.AC_Name}</div>
+                      </div>
+
+                      <div>
+                        <div className="info-label">Population</div>
+                        <div className="info-value">
+                          {Number(activeWard.TotalPop || 0).toLocaleString()}
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="info-label">SC Population</div>
+                        <div className="info-value">
+                          {Number(activeWard.SC_Pop || 0).toLocaleString()}
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
-            )}
-          </>
+            </div>
+          </div>
         )}
+
       </main>
     </div>
   );

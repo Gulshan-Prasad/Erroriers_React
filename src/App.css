@@ -217,3 +217,53 @@
 .fill-red {
   background: #ef4444;
 }
+
+/* ---------- HISTORY TAB IMPROVEMENTS ---------- */
+.history {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.historyGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .historyGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.historyTitle {
+  font-size: 18px;
+  font-weight: 750;
+  margin-bottom: 10px;
+  color: #0f172a;
+}
+
+.historyBadge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  margin-bottom: 12px;
+}
+
+.historyDetails {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 520px) {
+  .historyDetails {
+    grid-template-columns: 1fr;
+  }
+}

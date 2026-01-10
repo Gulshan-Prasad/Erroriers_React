@@ -1,0 +1,32 @@
+/* Leaflet map container */
+.map {
+  height: 420px;
+  width: 100%;
+}
+
+/* Selected ward info panel */
+.wardPanel {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow-x: auto;
+}
+
+.wardPanelTitle {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.wardPanelJson {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.35;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+}

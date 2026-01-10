@@ -1,5 +1,7 @@
 import { MapContainer, TileLayer, GeoJSON, Pane } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import "./MapView.css";
+
 import L from "leaflet";
 import { useEffect, useState } from "react";
 
@@ -36,12 +38,11 @@ function darkenRgb(rgb, factor = 0.75) {
   )})`;
 }
 
-export default function MapView({ zones, onSelect, onWardSelect }) {
+export default function MapView({ onWardSelect }) {
   const [wards, setWards] = useState(null);
   const [selectedWard, setSelectedWard] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
 
-  /* Load wards once */
   useEffect(() => {
     fetch("/data/Delhi_Ward_Prop.geojson")
       .then((res) => res.json())
@@ -51,7 +52,6 @@ export default function MapView({ zones, onSelect, onWardSelect }) {
   const defaultStyle = {
     fill: true,
     color: "#2563eb",
-    fillColor: "#fa7260",
     weight: 1,
     fillOpacity: 0.25,
   };
@@ -61,14 +61,12 @@ export default function MapView({ zones, onSelect, onWardSelect }) {
       <MapContainer
         center={[28.6139, 77.209]}
         zoom={11}
-        style={{ height: "420px", width: "100%" }}
+        className="map"
       >
         <Pane name="wards" style={{ zIndex: 200 }} />
-        <Pane name="zones" style={{ zIndex: 400 }} />
 
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-        {/* Ward polygons */}
         {wards && (
           <GeoJSON
             data={wards}
@@ -115,7 +113,8 @@ export default function MapView({ zones, onSelect, onWardSelect }) {
 
                 click: (e) => {
                   setSelectedId(id);
-                  setSelectedWard(feature.properties); // ✅ fixed
+
+                  setSelectedWard(feature.properties);
                   onWardSelect?.(feature.properties);
 
                   e.target.setStyle({
@@ -129,14 +128,6 @@ export default function MapView({ zones, onSelect, onWardSelect }) {
           />
         )}
       </MapContainer>
-
-      {/* Ward info panel */}
-      {selectedWard && (
-        <div className="mt-3 p-3 rounded bg-gray-900 text-white text-sm">
-          <h3 className="font-bold mb-1">Selected Ward</h3>
-          <pre>{JSON.stringify(selectedWard, null, 2)}</pre>
-        </div>
-      )}
     </>
   );
 }

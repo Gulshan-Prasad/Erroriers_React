@@ -1,3 +1,5 @@
+import "./Sidebar.css";
+
 export default function Sidebar({ activeTab, onChange }) {
   const tabs = [
     { id: "home", label: "Home" },
@@ -6,19 +8,15 @@ export default function Sidebar({ activeTab, onChange }) {
   ];
 
   return (
-    <aside className="w-64 border-r bg-white p-4">
-      <h2 className="text-lg font-semibold mb-4">Tabs</h2>
+    <aside className="sidebar">
+      <h2 className="sidebarTitle">Tabs</h2>
 
-      <div className="space-y-1">
+      <div className="sidebarTabs">
         {tabs.map((t) => (
           <button
             key={t.id}
             onClick={() => onChange(t.id)}
-            className={`w-full text-left px-3 py-2 rounded-md text-sm ${
-              activeTab === t.id
-                ? "bg-blue-100 text-blue-700 font-medium"
-                : "hover:bg-slate-100"
-            }`}
+            className={`sidebarBtn ${activeTab === t.id ? "active" : ""}`}
           >
             {t.label}
           </button>
