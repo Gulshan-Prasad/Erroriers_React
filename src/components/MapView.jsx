@@ -3,7 +3,7 @@ import "leaflet/dist/leaflet.css";
 import "./MapView.css";
 
 import L from "leaflet";
-import { useEffect, useState } from "react";
+import { useEffect,useRef, useState } from "react";
 
 /* Fix Leaflet marker icons */
 delete L.Icon.Default.prototype._getIconUrl;
@@ -46,17 +46,50 @@ function darkenRgb(rgb, factor = 0.75) {
   )})`;
 }
 
-export default function MapView({ onWardSelect }) {
+export default function MapView({ activeWard, onWardSelect }) {
   const [wards, setWards] = useState(null);
   const [selectedWard, setSelectedWard] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
+  const mapRef = useRef(null);
+  const wardLayersRef = useRef([]);
+
 
 
   useEffect(() => {
     fetch("/data/wards_with_risk.geojson")
       .then((res) => res.json())
-      .then(setWards);
+      .then((data) =>{
+        wardLayersRef.current = [];
+        setWards(data);
+      });
   }, []);
+
+  useEffect(() => {
+    if (!activeWard || !mapRef.current || !wardLayersRef.current.length) return;
+
+    const match = wardLayersRef.current.find(
+      (w) => w.feature.properties.WardName === activeWard.WardName
+    );
+
+    if (!match) return;
+
+    const { layer, id, feature } = match;
+
+    // zoom to ward
+    mapRef.current.fitBounds(layer.getBounds(), {
+      padding: [40, 40],
+    });
+
+    // simulate click behavior
+    setSelectedId(id);
+    onWardSelect?.(feature.properties);
+
+    layer.setStyle({
+      weight: 4,
+      fillOpacity: 0.35,
+    });
+  }, [activeWard]);
+
 
   const defaultStyle = {
     fill: true,
@@ -67,7 +100,12 @@ export default function MapView({ onWardSelect }) {
 
   return (
     <div className="mapRow">
-        <MapContainer center={[28.6139, 77.209]} zoom={11} className="map">
+        <MapContainer 
+        center={[28.6139, 77.209]} 
+        zoom={11} 
+        className="map"
+        whenCreated={(map) => {mapRef.current = map;}}
+        >
         <Pane name="wards" style={{ zIndex: 200 }} />
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
@@ -95,6 +133,12 @@ export default function MapView({ onWardSelect }) {
               const risk = Number(feature?.properties?.composite_risk_score_100 || 0);
               // const fillColor = getPopColor(pop);
               const fillColor = getRiskColor(risk)
+
+              wardLayersRef.current.push({
+                id,
+                layer,
+                feature,
+              });
 
                 layer.on({
                 mouseover: (e) => {
