@@ -68,10 +68,30 @@ export default function App() {
 
         {activeTab === "home" && (
           <>
-            <div className="card mb-6 card-text">
-              This portal allows citizens to report urban waterlogging, track
-              complaints, and review historical waterlogging patterns across
-              Delhi wards.
+            <div className="statsGrid">
+              <div className="statCard">
+                <div className="statLabel">Average WLPI</div>
+                <div className="statValue">63.0</div>
+                <div className="statSub red">↑ 2.4%</div>
+              </div>
+
+              <div className="statCard">
+                <div className="statLabel">Critical Wards</div>
+                <div className="statValue">1</div>
+                <div className="statSub">Needs attention</div>
+              </div>
+
+              <div className="statCard">
+                <div className="statLabel">Rainfall</div>
+                <div className="statValue">12.5 mm</div>
+                <div className="statSub">Forecast: 0mm</div>
+              </div>
+
+              <div className="statCard">
+                <div className="statLabel">Preparedness</div>
+                <div className="statValue green">78%</div>
+                <div className="statSub green">↑ 5%</div>
+              </div>
             </div>
 
             <div className="map-wrapper">

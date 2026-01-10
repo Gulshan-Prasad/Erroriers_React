@@ -19,13 +19,12 @@ function getPopColor(pop) {
   const p = Math.min(pop / MAX_POP, 1);
 
   if (p <= 0.2) return "#22c55e"; 
-  if (p <= 0.4) return "#eab308"; // yellow
-  if (p <= 0.6) return "#f97316"; // orange
-  if (p <= 0.8) return "#ef4444"; // red
-  return "#78350f"; // brown
+  if (p <= 0.4) return "#eab308"; 
+  if (p <= 0.6) return "#f97316"; 
+  if (p <= 0.8) return "#ef4444";
+  return "#78350f"; 
 }
 
-// darken any rgb() color by factor
 function darkenRgb(rgb, factor = 0.75) {
   const match = rgb.match(/\d+/g);
   if (!match) return rgb;
