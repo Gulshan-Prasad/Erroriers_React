@@ -115,7 +115,7 @@ export default function MapView({ onWardSelect }) {
                     target.setStyle({
                     fillColor,
                     fillOpacity: 0.25,
-                    weight: id === selectedId ? 4 : 1,
+                    weight: 1,
                     });
                 },
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Sidebar from "./components/Sidebar";
 import MapView from "./components/MapView";
 import "./App.css";
+import "./components/MapView.css";
 
 export default function App() {
   const [zones, setZones] = useState([]);
@@ -39,6 +40,7 @@ export default function App() {
     if (!activeWard) return;
 
     setLoadingInsights(true);
+    console.log(activeWard);
 
     fetch("http://localhost:3001/api/insights", {
       method: "POST",
@@ -93,15 +95,14 @@ export default function App() {
                 onSelect={setActiveZone}
                 onWardSelect={setActiveWard}
               />
-            </div>
 
               <div className="aiCardBox">
-              <div className="aiCardHeader">
-                    <h3 className="aiCardTitle">
+                <div className="aiCardHeader">
+                  <h3 className="aiCardTitle">
                     <span className="aiHighlight">Actionable</span> Insights
-                    </h3>
+                  </h3>
 
-                    <span className="aiGenerated">AI Generated</span>
+                  <span className="aiGenerated">AI Generated</span>
                 </div>
 
                 {/* Empty content block */}
@@ -120,8 +121,9 @@ export default function App() {
                       </div>
                     ))}
                 </div>
-
               </div>
+            </div>
+
 
 
             {/* Ward info */}
@@ -132,15 +134,15 @@ export default function App() {
                 const risk = Number(activeWard.composite_risk_score_100 || 0)
                 const pop = Number(activeWard.TotalPop || 0);
                 const percent = Math.min((pop / MAX_POP) * 100, 100);
-                const riskPercent = Math.min((risk/ MAX_RISK)* 100,100)
+                const riskPercent = Math.min((risk / MAX_RISK) * 100, 100)
 
 
                 const barClass =
                   percent >= 80
                     ? "fill-red"
                     : percent >= 50
-                    ? "fill-orange"
-                    : "fill-green";
+                      ? "fill-orange"
+                      : "fill-green";
 
                 return (
                   <div className="card mb-4">
@@ -151,9 +153,9 @@ export default function App() {
                         <div className="info-label">Ward No.</div>
                         <div className="info-value">{activeWard.Ward_No}</div>
                         <div className="info-label">Drain score</div>
-                        <div className="info-value">{activeWard.drain_score*10}</div>
+                        <div className="info-value">{activeWard.drain_score * 10}</div>
                         <div className="info-label">Drain density</div>
-                        <div className="info-value">{activeWard.drain_density*1000}</div>
+                        <div className="info-value">{activeWard.drain_density * 1000}</div>
                       </div>
 
                       <div>

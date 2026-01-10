@@ -54,6 +54,7 @@ ${JSON.stringify(zones || [], null, 2)}
     });
 
     const data = await response.json();
+    console.log(data);
 
     const raw = data?.choices?.[0]?.message?.content || "";
     // parse JSON safely

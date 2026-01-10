@@ -1,7 +1,25 @@
-.mapRow {
+.map-wrapper {
   display: flex;
   gap: 12px;
   align-items: stretch;
+  width: 100%;
+}
+
+/* Map should take left half */
+.map-wrapper .leaflet-container {
+  flex: 1;
+  height: 420px;
+  width: 100% !important;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+
+.mapRow {
+  gap: 12px;
+  align-items: stretch;
+  width: 50%;
 }
 
 .mapRow .map {
@@ -17,13 +35,14 @@
 
 /* Card container */
 .aiCardBox {
-  flex: 0.5;
+  flex: 1;
   background: #ffffff;
   border: 1px solid rgba(15, 23, 42, 0.12);
   border-radius: 18px;
   overflow: hidden;
   height: 420px;
   box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+  width: 50%
 }
 
 /* Header */
@@ -70,6 +89,19 @@
 
 /* responsive */
 @media (max-width: 900px) {
+  .map-wrapper {
+    flex-direction: column;
+  }
+
+  .aiCardBox {
+    height: auto;
+    min-height: 260px;
+  }
+
+  .map-wrapper .leaflet-container {
+    height: 360px;
+  }
+
   .aiCardBox {
     flex: 1;
     width: 100%;
