@@ -43,6 +43,7 @@ export default function MapView({ onWardSelect }) {
   const [selectedWard, setSelectedWard] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
 
+
   useEffect(() => {
     fetch("/data/Delhi_Ward_Prop.geojson")
       .then((res) => res.json())
@@ -57,77 +58,70 @@ export default function MapView({ onWardSelect }) {
   };
 
   return (
-    <>
-      <MapContainer
-        center={[28.6139, 77.209]}
-        zoom={11}
-        className="map"
-      >
+    <div className="mapRow">
+        <MapContainer center={[28.6139, 77.209]} zoom={11} className="map">
         <Pane name="wards" style={{ zIndex: 200 }} />
-
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
         {wards && (
-          <GeoJSON
+            <GeoJSON
             data={wards}
             pane="wards"
             interactive={true}
             style={(feature) => {
-              const id = feature?.properties?.FID;
-              const pop = Number(feature?.properties?.TotalPop || 0);
-              const fillColor = getPopColor(pop);
+                const id = feature?.properties?.FID;
+                const pop = Number(feature?.properties?.TotalPop || 0);
+                const fillColor = getPopColor(pop);
 
-              return {
+                return {
                 ...defaultStyle,
                 fillColor,
                 weight: id === selectedId ? 4 : 1,
-              };
+                };
             }}
             onEachFeature={(feature, layer) => {
-              const id = feature.properties?.FID;
-              const pop = Number(feature?.properties?.TotalPop || 0);
-              const fillColor = getPopColor(pop);
+                const id = feature.properties?.FID;
+                const pop = Number(feature?.properties?.TotalPop || 0);
+                const fillColor = getPopColor(pop);
 
-              layer.on({
+                layer.on({
                 mouseover: (e) => {
-                  const target = e.target;
+                    const target = e.target;
 
-                  if (id !== selectedId) {
+                    if (id !== selectedId) {
                     target.setStyle({
-                      fillColor: darkenRgb(fillColor, 0.65),
-                      fillOpacity: 0.65,
-                      weight: 2,
+                        fillColor: darkenRgb(fillColor, 0.65),
+                        fillOpacity: 0.65,
+                        weight: 2,
                     });
-                  }
+                    }
                 },
 
                 mouseout: (e) => {
-                  const target = e.target;
+                    const target = e.target;
 
-                  target.setStyle({
+                    target.setStyle({
                     fillColor,
                     fillOpacity: 0.25,
                     weight: id === selectedId ? 4 : 1,
-                  });
+                    });
                 },
 
                 click: (e) => {
-                  setSelectedId(id);
+                    setSelectedId(id);
+                    onWardSelect?.(feature.properties);
 
-                  setSelectedWard(feature.properties);
-                  onWardSelect?.(feature.properties);
-
-                  e.target.setStyle({
+                    e.target.setStyle({
                     fillColor,
                     fillOpacity: 0.35,
                     weight: 4,
-                  });
+                    });
                 },
-              });
+                });
             }}
-          />
+            />
         )}
-      </MapContainer>
-    </>
-  );
+        </MapContainer>
+    </div>
+    );
 }

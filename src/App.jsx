@@ -16,6 +16,9 @@ export default function App() {
   const [severity, setSeverity] = useState("LOW");
   const [description, setDescription] = useState("");
 
+  const [insights, setInsights] = useState([]);
+  const [loadingInsights, setLoadingInsights] = useState(false);
+
   useEffect(() => {
     fetch("/data/water_logging_spots.json")
       .then((res) => res.json())
@@ -31,6 +34,28 @@ export default function App() {
         setWards(wardNames);
       });
   }, []);
+
+  useEffect(() => {
+    if (!activeWard) return;
+
+    setLoadingInsights(true);
+
+    fetch("http://localhost:3001/api/insights", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ward: activeWard,
+        zones: zones.slice(0, 10) // optional: nearby zones later
+      })
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        setInsights(data.insights || []);
+      })
+      .catch(console.error)
+      .finally(() => setLoadingInsights(false));
+  }, [activeWard]);
+
 
   const filteredWards = wards.filter((w) =>
     w.toLowerCase().includes(wardQuery.toLowerCase())
@@ -70,25 +95,34 @@ export default function App() {
               />
             </div>
 
-            {activeZone && (
-              <div className="card mb-4">
-                <div className="section-title">{activeZone.name}</div>
+              <div className="aiCardBox">
+              <div className="aiCardHeader">
+                    <h3 className="aiCardTitle">
+                    <span className="aiHighlight">Actionable</span> Insights
+                    </h3>
 
-                <div className="grid-info">
-                  <div>
-                    <div className="info-label">Severity</div>
-                    <div className="info-value">{activeZone.severity}</div>
-                  </div>
-
-                  <div>
-                    <div className="info-label">Coordinates</div>
-                    <div className="info-value">
-                      {activeZone.lat}, {activeZone.lng}
-                    </div>
-                  </div>
+                    <span className="aiGenerated">AI Generated</span>
                 </div>
+
+                {/* Empty content block */}
+                <div className="aiCardEmpty">
+                  {loadingInsights && <p>Generating insights...</p>}
+
+                  {!loadingInsights && insights.length === 0 && (
+                    <p>No insights yet. Select a ward.</p>
+                  )}
+
+                  {!loadingInsights &&
+                    insights.map((x, i) => (
+                      <div key={i} style={{ marginBottom: 12 }}>
+                        <b>{x.title}</b>
+                        <div style={{ fontSize: 13, color: "#64748b" }}>{x.subtitle}</div>
+                      </div>
+                    ))}
+                </div>
+
               </div>
-            )}
+
 
             {/* Ward info */}
             {activeWard &&

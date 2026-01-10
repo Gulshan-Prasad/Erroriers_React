@@ -1,7 +1,95 @@
-/* Leaflet map container */
-.map {
+.mapRow {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.mapRow .map {
+  flex: 0.5; /* map takes remaining width */
   height: 420px;
-  width: 100%;
+}
+
+.Insights {
+  font-size: 14px;
+  color: var(--muted);
+  text-align: left;
+}
+
+/* Card container */
+.aiCardBox {
+  flex: 0.5;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 18px;
+  overflow: hidden;
+  height: 420px;
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+}
+
+/* Header */
+.aiCardHeader {
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+/* Title */
+.aiCardTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 850;
+  color: #0f172a;
+  letter-spacing: -0.2px;
+}
+
+/* Highlight "Actionable" */
+.aiHighlight {
+  font-weight: 950;
+  color: #0f172a;
+}
+
+/* Blue pill */
+.aiGenerated {
+  font-size: 12px;
+  font-weight: 900;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.14);
+  color: #1d4ed8;
+  border: 1px solid rgba(37, 99, 235, 0.22);
+}
+
+/* Empty content area */
+.aiCardEmpty {
+  height: calc(420px - 60px);
+  padding: 16px 18px;
+  background: #ffffff;
+}
+
+/* responsive */
+@media (max-width: 900px) {
+  .aiCardBox {
+    flex: 1;
+    width: 100%;
+    height: auto;
+  }
+
+  .aiCardEmpty {
+    height: 250px;
+  }
+}
+
+/* Mobile: stack vertically */
+@media (max-width: 900px) {
+  .mapRow {
+    flex-direction: column;
+  }
+
+  .aiins {
+    width: 100%;
+  }
 }
 
 /* Selected ward info panel */
