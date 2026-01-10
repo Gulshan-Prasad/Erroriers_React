@@ -24,7 +24,7 @@ export default function App() {
       .then((res) => res.json())
       .then(setZones);
 
-    fetch("/data/Delhi_Ward_Prop.geojson")
+    fetch("/data/wards_with_risk.geojson")
       .then((res) => res.json())
       .then((geojson) => {
         const wardNames = geojson.features
@@ -128,8 +128,12 @@ export default function App() {
             {activeWard &&
               (() => {
                 const MAX_POP = 100000;
+                const MAX_RISK = 100;
+                const risk = Number(activeWard.composite_risk_score_100 || 0)
                 const pop = Number(activeWard.TotalPop || 0);
                 const percent = Math.min((pop / MAX_POP) * 100, 100);
+                const riskPercent = Math.min((risk/ MAX_RISK)* 100,100)
+
 
                 const barClass =
                   percent >= 80
@@ -146,6 +150,10 @@ export default function App() {
                       <div>
                         <div className="info-label">Ward No.</div>
                         <div className="info-value">{activeWard.Ward_No}</div>
+                        <div className="info-label">Drain score</div>
+                        <div className="info-value">{activeWard.drain_score*10}</div>
+                        <div className="info-label">Drain density</div>
+                        <div className="info-value">{activeWard.drain_density*1000}</div>
                       </div>
 
                       <div>
@@ -166,6 +174,21 @@ export default function App() {
                           <div
                             className={`progress-fill ${barClass}`}
                             style={{ width: `${percent}%` }}
+                          />
+                        </div>
+                      </div>
+                      <div style={{ gridColumn: "1 / -1" }}>
+                        <div className="risk-row">
+                          <span>Risk</span>
+                          <strong>
+                            {risk.toLocaleString()} / {MAX_RISK.toLocaleString()}
+                          </strong>
+                        </div>
+
+                        <div className="progress-bg">
+                          <div
+                            className={`progress-fill ${barClass}`}
+                            style={{ width: `${riskPercent}%` }}
                           />
                         </div>
                       </div>
@@ -223,7 +246,7 @@ export default function App() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe the waterlogging situation"
-                className="textarea mb-4"
+                className="textarea mb-4 "
               />
 
               <button onClick={submitReport} className="btn-primary">
