@@ -127,6 +127,7 @@ export default function App() {
   ).length;
 
   const prepIndex = preparednessIndex(wardObjects)
+  const drainIndex = Math.floor(wardObjects.reduce((sum, w) => sum + (Number(w.drain_score) * 10 || 0), 0) / wards.length);
 
   console.log(prepIndex)
   return (
@@ -161,8 +162,8 @@ export default function App() {
               </div>
 
               <div className="statCard">
-                <div className="statLabel">Avg Preparedness (0-100)</div>
-                <div className="statValue green">{prepIndex}</div>
+                <div className="statLabel">Avg Drain Score (0-10)</div>
+                <div className="statValue green">{drainIndex}</div>
                 {/* <div className="statSub green">↑ 5%</div> */}
               </div>
             </div>
@@ -214,25 +215,37 @@ export default function App() {
                     <span className="aiHighlight">Actionable</span> Insights
                   </h3>
 
-                  <span className="aiGenerated">AI Generated</span>
+                  <button className="aiBtn" onClick={() => setActiveWard({ ...activeWard })}>
+                    Regenerate
+                  </button>
+
+
+                  {/* <span className="aiGenerated">AI Generated</span> */}
                 </div>
 
                 {/* Empty content block */}
                 <div className="aiCardEmpty">
-                  {loadingInsights && <p>Generating insights...</p>}
+                  {loadingInsights && <p className="aiMuted">Generating insights...</p>}
 
                   {!loadingInsights && insights.length === 0 && (
-                    <p>No insights yet. Select a ward.</p>
+                    <p className="aiMuted">No insights yet. Select a ward.</p>
                   )}
 
                   {!loadingInsights &&
                     insights.map((x, i) => (
-                      <div key={i} style={{ marginBottom: 12 }}>
-                        <b>{x.title}</b>
-                        <div style={{ fontSize: 13, color: "#64748b" }}>{x.subtitle}</div>
+                      <div key={i} className="insightRow">
+                        <div className="insightLeft">
+                          <div className="insightTitle">{x.title}</div>
+                          <div className="insightSub">{x.subtitle}</div>
+                        </div>
+
+                        <div className={`insightBadge badge-${(x.severity || "LOW").toLowerCase()}`}>
+                          {x.severity || "LOW"}
+                        </div>
                       </div>
                     ))}
                 </div>
+
               </div>
 
             </div>
@@ -327,7 +340,7 @@ export default function App() {
 
                           <div className="progress-bg">
                             <div
-                              className= "progress-fill"
+                              className="progress-fill"
                               style={{ width: `${elevationPercent}%`, backgroundColor: '#2563EB' }}
                             />
                           </div>
