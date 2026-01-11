@@ -25,6 +25,8 @@ export default function App() {
 
   const [weatherCoords, setWeatherCoords] = useState(null);
 
+  const [wardObjects, setWardObjects] = useState([])
+
   useEffect(() => {
     fetch("/data/wards_with_risk.geojson")
       .then((res) => res.json())
@@ -66,32 +68,35 @@ export default function App() {
       .finally(() => setLoadingInsights(false));
   }, [activeWard]);
 
+  const filteredWardObjects = wardObjects.filter((wardObj) =>
+    wardObj.WardName.toLowerCase().includes(wardQuery.toLowerCase())
+  );
 
   const filteredWards = wards.filter((w) =>
     w.toLowerCase().includes(wardQuery.toLowerCase())
   );
 
   const submitReport = () => {
-  if (!selectedWard || !description) return;
+    if (!selectedWard || !description) return;
 
-  setReports((prev) => [
-    {
-      id: Date.now(),
-      ward: selectedWard,
-      severity,
-      status: "Pending",
-      time: new Date().toLocaleString()
-    },
-    ...prev
-  ]);
+    setReports((prev) => [
+      {
+        id: Date.now(),
+        ward: selectedWard,
+        severity,
+        status: "Pending",
+        time: new Date().toLocaleString()
+      },
+      ...prev
+    ]);
 
-  alert("Report submitted successfully");
+    alert("Report submitted successfully");
 
-  setSelectedWard("");
-  setWardQuery("");
-  setSeverity("LOW");
-  setDescription("");
-};
+    setSelectedWard("");
+    setWardQuery("");
+    setSeverity("LOW");
+    setDescription("");
+  };
 
   useEffect(() => {
     console.log("activeWard:", activeWard);
@@ -105,13 +110,13 @@ export default function App() {
     console.log("wardQuery:", filteredWardObjects);
   }, [filteredWardObjects]);
 
-  const avgRisk = Math.floor(wardObjects.reduce((sum, w) => sum + (Number(w.composite_risk_score_100) || 0), 0)/ wards.length);
+  const avgRisk = Math.floor(wardObjects.reduce((sum, w) => sum + (Number(w.composite_risk_score_100) || 0), 0) / wards.length);
 
-  const avgRainfall = Math.floor(wardObjects.reduce((sum, w) => sum +(Number(w.ward_rainfall_avg_rainfall_mm) || 0), 0)/ wards.length)
+  const avgRainfall = Math.floor(wardObjects.reduce((sum, w) => sum + (Number(w.ward_rainfall_avg_rainfall_mm) || 0), 0) / wards.length)
 
   const criticalWards = wardObjects.filter(
-  (w) => Number(w.composite_risk_score_100) > 75
-).length;
+    (w) => Number(w.composite_risk_score_100) > 75
+  ).length;
 
   const prepIndex = preparednessIndex(wardObjects)
 
@@ -150,8 +155,8 @@ export default function App() {
                 {/* <div className="statSub green">↑ 5%</div> */}
               </div>
             </div>
-<div className="ward-search-wrapper">
-            <input
+            <div className="ward-search-wrapper">
+              <input
                 value={wardQuery}
                 onChange={(e) => {
                   setWardQuery(e.target.value);
@@ -159,14 +164,15 @@ export default function App() {
                 }}
                 placeholder="Search ward"
                 className="input mb-2"
-                style={{width: 500,
+                style={{
+                  width: 500,
                   position: "relative"
                 }}
               />
 
-{wardQuery && (
+              {wardQuery && (
                 <div className="dropdown"
-                      style={{position:"absolute"}}
+                  style={{ position: "absolute" }}
                 >
                   {filteredWardObjects.map((ward) => (
                     <div
@@ -182,10 +188,11 @@ export default function App() {
                   ))}
                 </div>
               )}
-</div>
+            </div>
             <div className="map-wrapper">
               <MapView
                 zones={zones}
+                activeWard={activeWard}
                 onSelect={setActiveZone}
                 onWardSelect={setActiveWard}
               />
@@ -232,7 +239,7 @@ export default function App() {
 
 
                 const barClass =
-                  percent >= 80 ? "fill-red" : percent >= 60 ? "fill-orange" : percent >=40? "fill-yellow" : "fill-green";
+                  percent >= 80 ? "fill-red" : percent >= 60 ? "fill-orange" : percent >= 40 ? "fill-yellow" : "fill-green";
 
                 return (
                   <div className="card mb-4">
@@ -253,7 +260,7 @@ export default function App() {
                         <div className="info-value">{activeWard.WardName}</div>
                       </div>
 
-                  {/* <div style={{ gridColumn: "1 / -1" }}>
+                      {/* <div style={{ gridColumn: "1 / -1" }}>
                     <div className="pop-row">
                       <span>Population</span>
                       <strong>
@@ -326,21 +333,21 @@ export default function App() {
                 {wardQuery &&
                   filteredWards.length > 0 &&
                   !filteredWards.includes(wardQuery) && (
-                  <div className="dropdown">
-                    {filteredWards.map((ward) => (
-                      <div
-                        key={ward}
-                        className="dropdown-item"
-                        onClick={() => {
-                          setSelectedWard(ward);
-                          setWardQuery(ward);
-                        }}
-                      >
-                        {ward}
-                      </div>
-                    ))}
-                  </div>
-                )}
+                    <div className="dropdown">
+                      {filteredWards.map((ward) => (
+                        <div
+                          key={ward}
+                          className="dropdown-item"
+                          onClick={() => {
+                            setSelectedWard(ward);
+                            setWardQuery(ward);
+                          }}
+                        >
+                          {ward}
+                        </div>
+                      ))}
+                    </div>
+                  )}
               </div>
 
               <select
@@ -369,31 +376,31 @@ export default function App() {
               <h2 className="section-title">Active Reports</h2>
               {reports.length === 0 ? (
                 <p className="text-muted">No active reports submitted yet.</p>
-               ) : (
-                 reports.map((r) => (
-                   <div key={r.id} className="card mb-3">
-                     <div className="section-title">{r.ward}</div>
+              ) : (
+                reports.map((r) => (
+                  <div key={r.id} className="card mb-3">
+                    <div className="section-title">{r.ward}</div>
 
-                     <div className="grid-info">
-                       <div>
-                         <div className="info-label">Severity</div>
-                         <div className={`info-value severity-${r.severity.toLowerCase()}`}>
-                           {r.severity}
-                         </div>
-                       </div>
+                    <div className="grid-info">
+                      <div>
+                        <div className="info-label">Severity</div>
+                        <div className={`info-value severity-${r.severity.toLowerCase()}`}>
+                          {r.severity}
+                        </div>
+                      </div>
 
-                       <div>
-                         <div className="info-label">Status</div>
-                         <div className={`info-value status-${r.status.toLowerCase()}`}>
-                           {r.status}
-                         </div>
-                       </div>
-                     </div>
+                      <div>
+                        <div className="info-label">Status</div>
+                        <div className={`info-value status-${r.status.toLowerCase()}`}>
+                          {r.status}
+                        </div>
+                      </div>
+                    </div>
 
-                     <div className="text-muted">{r.time}</div>
-                   </div>
-                 ))
-               )}
+                    <div className="text-muted">{r.time}</div>
+                  </div>
+                ))
+              )}
 
             </div>
           </div>
@@ -405,7 +412,7 @@ export default function App() {
         {activeTab === "history" && (
 
           <div className="map-wrapper">
-            
+
             <WeatherCard query="New Delhi, India" />
 
           </div>
