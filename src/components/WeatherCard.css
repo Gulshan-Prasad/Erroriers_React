@@ -1,0 +1,269 @@
+/* ---------------- ROOT CARD LAYOUT ---------------- */
+
+.weatherRow {
+  display: flex;
+  gap: 14px;
+  align-items: stretch;
+  width: 100%;
+}
+
+/* Left side */
+.weatherCard {
+  flex: 1;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 18px;
+  overflow: hidden;
+  height: fit-content;
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+}
+
+/* Right side */
+.forecastCard {
+  flex: 1;
+  background: linear-gradient(180deg, #f1f5ff 0%, #ffffff 100%);
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  border-radius: 18px;
+  overflow: hidden;
+  height: fit-content;
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.08);
+}
+
+/* ---------------- WEATHER CARD ---------------- */
+
+.weatherHeader {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.weatherTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.weatherTag {
+  font-size: 12px;
+  font-weight: 900;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.14);
+  color: #16a34a;
+  border: 1px solid rgba(34, 197, 94, 0.22);
+}
+
+.weatherBody {
+  padding: 16px 18px;
+}
+
+.weatherMuted {
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* Top section */
+.weatherTop {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.weatherIcon {
+  width: 54px;
+  height: 54px;
+}
+
+.weatherTemp {
+  font-size: 26px;
+  font-weight: 900;
+  color: #0f172a;
+  line-height: 1;
+}
+
+.weatherText {
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+}
+
+.weatherLoc {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* Map block */
+.weatherMiniMap {
+  margin-top: 14px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+.weatherMiniMap .leaflet-container {
+  border-radius: 14px;
+}
+
+.coordLine {
+  padding: 8px 10px;
+  font-size: 12px;
+  color: #64748b;
+  background: #f8fafc;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+/* Stats grid */
+.weatherGrid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  font-size: 13px;
+}
+
+.weatherGrid div {
+  padding: 10px;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 1px solid rgba(15, 23, 42, 0.07);
+}
+
+.weatherGrid span {
+  display: block;
+  color: #64748b;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+.weatherGrid b {
+  color: #0f172a;
+}
+
+/* ---------------- FORECAST CARD ---------------- */
+
+.forecastHeader {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(37, 99, 235, 0.14);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.forecastTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.forecastTag {
+  font-size: 12px;
+  font-weight: 900;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.12);
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.22);
+}
+
+/* forecast days vertical */
+.forecastGrid {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.forecastDay {
+  width: 100%;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.forecastDate {
+  font-size: 12px;
+  font-weight: 900;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.forecastTopRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.forecastTopRow img {
+  width: 34px;
+  height: 34px;
+}
+
+.forecastCond {
+  font-size: 13px;
+  color: #334155;
+  font-weight: 700;
+}
+
+/* small stats grid inside each day */
+.forecastStats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+.forecastStats span {
+  display: block;
+  color: #64748b;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+.forecastStats b {
+  color: #0f172a;
+}
+
+/* rain badge */
+.rainBadge {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 900;
+  text-align: center;
+}
+
+/* colors */
+.badgeLow {
+  background: rgba(34, 197, 94, 0.14);
+  color: #166534;
+  border: 1px solid rgba(34, 197, 94, 0.28);
+}
+
+.badgeMid {
+  background: rgba(234, 179, 8, 0.14);
+  color: #854d0e;
+  border: 1px solid rgba(234, 179, 8, 0.28);
+}
+
+.badgeHigh {
+  background: rgba(239, 68, 68, 0.14);
+  color: #991b1b;
+  border: 1px solid rgba(239, 68, 68, 0.28);
+}
+
+/* ---------------- RESPONSIVE ---------------- */
+
+@media (max-width: 950px) {
+  .weatherRow {
+    flex-direction: column;
+  }
+}

@@ -3,6 +3,7 @@ import Sidebar from "./components/Sidebar";
 import MapView from "./components/MapView";
 import "./App.css";
 import "./components/MapView.css";
+import WeatherCard from "./components/WeatherCard.jsx";
 
 export default function App() {
   const [zones, setZones] = useState([]);
@@ -11,7 +12,6 @@ export default function App() {
   const [activeTab, setActiveTab] = useState("home");
 
   const [wards, setWards] = useState([]);
-  const [wardObjects, setWardObjects] = useState([]);
   const [wardQuery, setWardQuery] = useState("");
   const [selectedWard, setSelectedWard] = useState("");
 
@@ -21,6 +21,8 @@ export default function App() {
   const [insights, setInsights] = useState([]);
   const [loadingInsights, setLoadingInsights] = useState(false);
 
+  const [weatherCoords, setWeatherCoords] = useState(null);
+
   useEffect(() => {
     fetch("/data/water_logging_spots.json")
       .then((res) => res.json())
@@ -29,17 +31,10 @@ export default function App() {
     fetch("/data/wards_with_risk.geojson")
       .then((res) => res.json())
       .then((geojson) => {
-        const wardObjects = geojson.features
-          .map((f) => f.properties)
-        setWardObjects(wardObjects)
-      });
-
-    fetch("/data/wards_with_risk.geojson")
-      .then((res) => res.json())
-      .then((geojson) => {
         const wardNames = geojson.features
           .map((f) => f.properties?.WardName)
           .filter(Boolean);
+
         setWards(wardNames);
       });
   }, []);
@@ -71,10 +66,6 @@ export default function App() {
     w.toLowerCase().includes(wardQuery.toLowerCase())
   );
 
-  const filteredWardObjects = wardObjects.filter((wardObj) =>
-    wardObj.WardName.toLowerCase().includes(wardQuery.toLowerCase())
-  );
-
   const submitReport = () => {
     if (!selectedWard || !description) return;
 
@@ -84,18 +75,6 @@ export default function App() {
     setSeverity("LOW");
     setDescription("");
   };
-
-  useEffect(() => {
-    console.log("activeWard:", activeWard);
-  }, [activeWard]);
-
-  useEffect(() => {
-    console.log("wardObjects:", wardObjects);
-  }, [wardObjects]);
-
-  useEffect(() => {
-    console.log("wardQuery:", filteredWardObjects);
-  }, [filteredWardObjects]);
 
   return (
     <div className="app">
@@ -113,40 +92,9 @@ export default function App() {
               Delhi wards.
             </div>
 
-            <input
-                value={wardQuery}
-                onChange={(e) => {
-                  setWardQuery(e.target.value);
-                  setSelectedWard("");
-                }}
-                placeholder="Search ward"
-                className="input mb-2"
-                style={{width: 500}}
-              />
-
-{wardQuery && (
-                <div className="dropdown"
-                      style={{width:530}}
-                >
-                  {filteredWardObjects.map((ward) => (
-                    <div
-                      key={ward.Ward_No}
-                      onClick={() => {
-                        setActiveWard(ward)
-                        setWardQuery("")
-                      }}
-                      className="dropdown-item"
-                    >
-                      {ward.WardName}
-                    </div>
-                  ))}
-                </div>
-              )}
-
             <div className="map-wrapper">
               <MapView
                 zones={zones}
-                activeWard={activeWard}
                 onSelect={setActiveZone}
                 onWardSelect={setActiveWard}
               />
@@ -319,81 +267,14 @@ export default function App() {
         )}
 
         {/* ---------------- HISTORY TAB ---------------- */}
+
+
         {activeTab === "history" && (
-          <div className="history">
-            <div className="map-wrapper">
-              <MapView
-                zones={zones}
-                onSelect={setActiveZone}
-                onWardSelect={setActiveWard}
-              />
-            </div>
 
-            <div className="historyGrid">
-              {/* Zone Card */}
-              <div className="card">
-                <h2 className="section-title">Selected Flood Zone</h2>
+          <div className="map-wrapper">
+            
+            <WeatherCard query="New Delhi, India" />
 
-                {!activeZone ? (
-                  <p className="text-muted">Click any flood zone on the map.</p>
-                ) : (
-                  <>
-                    <div className="historyTitle">{activeZone.name}</div>
-                    <div className="historyBadge">{activeZone.severity}</div>
-
-                    <div className="historyDetails">
-                      <div>
-                        <div className="info-label">Latitude</div>
-                        <div className="info-value">{activeZone.lat}</div>
-                      </div>
-                      <div>
-                        <div className="info-label">Longitude</div>
-                        <div className="info-value">{activeZone.lng}</div>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-
-              {/* Ward Card */}
-              <div className="card">
-                <h2 className="section-title">Selected Ward</h2>
-
-                {!activeWard ? (
-                  <p className="text-muted">Click any ward on the map.</p>
-                ) : (
-                  <>
-                    <div className="historyTitle">{activeWard.WardName}</div>
-
-                    <div className="historyDetails">
-                      <div>
-                        <div className="info-label">Ward No.</div>
-                        <div className="info-value">{activeWard.Ward_No}</div>
-                      </div>
-
-                      <div>
-                        <div className="info-label">Assembly</div>
-                        <div className="info-value">{activeWard.AC_Name}</div>
-                      </div>
-
-                      <div>
-                        <div className="info-label">Population</div>
-                        <div className="info-value">
-                          {Number(activeWard.TotalPop || 0).toLocaleString()}
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="info-label">SC Population</div>
-                        <div className="info-value">
-                          {Number(activeWard.SC_Pop || 0).toLocaleString()}
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
           </div>
         )}
 
