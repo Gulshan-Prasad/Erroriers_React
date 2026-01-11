@@ -126,6 +126,65 @@
   color: #0f172a;
 }
 
+.wardStats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.statBox {
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  font-size: 12px;
+}
+
+.statBox span {
+  display: block;
+  color: #64748b;
+  font-size: 11px;
+  margin-bottom: 2px;
+  font-weight: 700;
+}
+
+.statBox b {
+  color: #0f172a;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.wardNameBox {
+  grid-column: 1 / -1;
+  max-width: 200px;
+  background: #f8fafc;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 14px;
+  padding: 10px 14px;
+}
+
+
+.wardNameBox span {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.wardNameBox b {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+
+
+@media (max-width: 760px) {
+  .wardStats {
+    grid-template-columns: 1fr;
+  }
+}
+
 .input,
 .select,
 .textarea {
@@ -354,7 +413,13 @@
   flex-direction: column;
   /* justify-content: space-around; */
   min-height: 120px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
+.statCard:hover {
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+  transform: translateY(-2px);
+}
+
 .statLabel {
   font-size: 13px;
   color: #64748b;

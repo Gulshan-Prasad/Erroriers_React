@@ -261,18 +261,29 @@ export default function App() {
 
                       <div className="grid-info">
                         <div>
-                          <div className="info-label">Ward No.</div>
-                          <div className="info-value">{activeWard.Ward_No}</div>
-                          <div className="info-label">Drain score</div>
-                          <div className="info-value">{activeWard.drain_score * 10}</div>
-                          <div className="info-label">Drain density</div>
-                          <div className="info-value">{(activeWard.drain_density * 1000).toPrecision(4)} km/km^2</div>
+                          <div className="wardStats">
+                            <div className="statBox">
+                              <span>Ward No.</span>
+                              <b>{activeWard.Ward_No}</b>
+                            </div>
+
+                            <div className="statBox">
+                              <span>Drain score</span>
+                              <b>{activeWard.drain_score * 10}</b>
+                            </div>
+
+                            <div className="statBox">
+                              <span>Drain density</span>
+                              <b>{(activeWard.drain_density * 1000).toPrecision(4)} km/km^2</b>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="statBox wardNameBox">
+                          <span>Ward Name</span>
+                          <b>{activeWard.WardName}</b>
                         </div>
 
-                        <div>
-                          <div className="info-label">Ward Name</div>
-                          <div className="info-value">{activeWard.WardName}</div>
-                        </div>
+
 
                         {/* <div style={{ gridColumn: "1 / -1" }}>
                       <div className="pop-row">
