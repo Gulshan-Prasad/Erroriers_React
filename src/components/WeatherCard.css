@@ -1,15 +1,44 @@
-/* ---------------- ROOT CARD LAYOUT ---------------- */
+/* ============================= */
+/* ✅ FINAL LAYOUT REQUIRED */
+/* ============================= */
 
-.weatherRow {
-  display: flex;
+.weatherSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* ✅ 50% + 50% */
   gap: 14px;
-  align-items: stretch;
+  align-items: start;
   width: 100%;
 }
 
-/* Left side */
+.weatherLeft {
+  width: 100%;
+}
+
+.weatherRight {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.weatherCard,
+.forecastCard,
+.rainAiCard {
+  width: 100%;
+}
+
+/* responsive */
+@media (max-width: 950px) {
+  .weatherSection {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================= */
+/* ✅ WEATHER CARD */
+/* ============================= */
+
 .weatherCard {
-  flex: 1;
   background: #ffffff;
   border: 1px solid rgba(15, 23, 42, 0.12);
   border-radius: 18px;
@@ -17,19 +46,6 @@
   height: fit-content;
   box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
 }
-
-/* Right side */
-.forecastCard {
-  flex: 1;
-  background: linear-gradient(180deg, #f1f5ff 0%, #ffffff 100%);
-  border: 1px solid rgba(37, 99, 235, 0.25);
-  border-radius: 18px;
-  overflow: hidden;
-  height: fit-content;
-  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.08);
-}
-
-/* ---------------- WEATHER CARD ---------------- */
 
 .weatherHeader {
   padding: 14px 18px;
@@ -143,7 +159,18 @@
   color: #0f172a;
 }
 
-/* ---------------- FORECAST CARD ---------------- */
+/* ============================= */
+/* ✅ FORECAST CARD */
+/* ============================= */
+
+.forecastCard {
+  background: linear-gradient(180deg, #f1f5ff 0%, #ffffff 100%);
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  border-radius: 18px;
+  overflow: hidden;
+  height: fit-content;
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.08);
+}
 
 .forecastHeader {
   padding: 14px 18px;
@@ -170,20 +197,54 @@
   border: 1px solid rgba(37, 99, 235, 0.22);
 }
 
-/* forecast days vertical */
 .forecastGrid {
   padding: 16px 18px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* ✅ horizontal */
   gap: 12px;
 }
 
+.forecastHead {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.forecastDate {
+  font-size: 12px;
+  font-weight: 900;
+  color: #0f172a;
+  text-align: center;
+}
+
+.forecastCondRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.forecastIcon {
+  width: 28px;
+  height: 28px;
+}
+
+.forecastCond {
+  font-size: 13px;
+  font-weight: 800;
+  color: #334155;
+}
+
 .forecastDay {
-  width: 100%;
+  flex: 1;
+  min-width: 160px;
   border: 1px solid rgba(15, 23, 42, 0.08);
   background: #ffffff;
   border-radius: 16px;
-  padding: 12px;
+  padding: 5px;
+  text-align: center;
 }
 
 .forecastDate {
@@ -195,8 +256,9 @@
 
 .forecastTopRow {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
   margin-bottom: 10px;
 }
 
@@ -211,7 +273,6 @@
   font-weight: 700;
 }
 
-/* small stats grid inside each day */
 .forecastStats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -231,7 +292,6 @@
   color: #0f172a;
 }
 
-/* rain badge */
 .rainBadge {
   margin-top: 10px;
   padding: 8px 10px;
@@ -241,7 +301,6 @@
   text-align: center;
 }
 
-/* colors */
 .badgeLow {
   background: rgba(34, 197, 94, 0.14);
   color: #166534;
@@ -260,10 +319,238 @@
   border: 1px solid rgba(239, 68, 68, 0.28);
 }
 
-/* ---------------- RESPONSIVE ---------------- */
+/* ============================= */
+/* ✅ AI CARD BELOW FORECAST */
+/* ============================= */
 
-@media (max-width: 950px) {
-  .weatherRow {
-    flex-direction: column;
-  }
+.rainAiCard {
+  background: linear-gradient(180deg, #f4f8ff 0%, #ffffff 100%);
+  border: 1px solid rgba(37, 99, 235, 0.22);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.08);
+  height: fit-content;
+}
+
+.rainAiHeader {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(37, 99, 235, 0.14);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rainAiTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.rainAiTag {
+  font-size: 12px;
+  font-weight: 900;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.12);
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.22);
+}
+
+.riskBadge {
+  margin: 16px 18px 10px 18px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 900;
+  text-align: center;
+  letter-spacing: 0.6px;
+}
+
+.riskSafe {
+  background: rgba(34, 197, 94, 0.14);
+  color: #166534;
+  border: 1px solid rgba(34, 197, 94, 0.28);
+}
+
+.riskNormal {
+  background: rgba(37, 99, 235, 0.1);
+  color: #1d4ed8;
+  border: 1px solid rgba(37, 99, 235, 0.25);
+}
+
+.riskCrucial {
+  background: rgba(234, 179, 8, 0.14);
+  color: #854d0e;
+  border: 1px solid rgba(234, 179, 8, 0.28);
+}
+
+.riskDanger {
+  background: rgba(239, 68, 68, 0.14);
+  color: #991b1b;
+  border: 1px solid rgba(239, 68, 68, 0.28);
+}
+
+.riskSummary {
+  padding: 0 18px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+  line-height: 1.5;
+}
+
+.riskList {
+  margin: 10px 0;
+  padding: 0 18px 0 34px;
+  font-size: 13px;
+  color: #475569;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.riskActions {
+  padding: 0 18px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.riskAction {
+  padding: 10px 12px;
+  background: #f8fafc;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #0f172a;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.riskAction::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #2563eb;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
+}
+
+.aiAdvice {
+  margin: 12px 18px 18px 18px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(37, 99, 235, 0.06);
+  border: 1px solid rgba(37, 99, 235, 0.14);
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+  line-height: 1.6;
+}
+
+/* ✅ AI Suggestion Box */
+.aiAdviceBox {
+  margin: 14px 18px 0 18px;
+  padding: 12px 14px;
+  background: #ffffff;
+  border: 1px dashed rgba(37, 99, 235, 0.35);
+  border-radius: 14px;
+}
+
+.aiAdviceTitle {
+  font-size: 12px;
+  font-weight: 900;
+  color: #2563eb;
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+}
+
+.aiAdviceText {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+  line-height: 1.5;
+}
+
+/* ✅ Waterlogging Probability Box */
+.waterlogBox {
+  margin: 14px 18px 18px 18px;
+  padding: 12px 14px;
+  background: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%);
+  border: 1px solid rgba(249, 115, 22, 0.25);
+  border-radius: 16px;
+}
+
+.waterlogHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  color: #0f172a;
+}
+
+.waterlogBadge {
+  font-size: 12px;
+  font-weight: 900;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+/* Risk Colors */
+.wlLow {
+  background: rgba(34, 197, 94, 0.14);
+  color: #166534;
+  border: 1px solid rgba(34, 197, 94, 0.28);
+}
+
+.wlMid {
+  background: rgba(234, 179, 8, 0.14);
+  color: #854d0e;
+  border: 1px solid rgba(234, 179, 8, 0.28);
+}
+
+.wlHigh {
+  background: rgba(239, 68, 68, 0.14);
+  color: #991b1b;
+  border: 1px solid rgba(239, 68, 68, 0.28);
+}
+
+.waterlogGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  font-size: 13px;
+}
+
+.waterlogGrid div {
+  padding: 10px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(15, 23, 42, 0.07);
+}
+
+.waterlogGrid span {
+  display: block;
+  color: #64748b;
+  font-size: 12px;
+  margin-bottom: 2px;
+  font-weight: 800;
+}
+
+.waterlogGrid b {
+  color: #0f172a;
+}
+
+.waterlogMsg {
+  margin: 10px 2px 0 2px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #334155;
+  line-height: 1.5;
 }

@@ -4,7 +4,7 @@ export default function Sidebar({ activeTab, onChange }) {
   const tabs = [
     { id: "home", label: "Home" },
     { id: "report", label: "Report Waterlogging" },
-    { id: "history", label: "History" },
+    { id: "history", label: "Weather" },
   ];
 
   return (
