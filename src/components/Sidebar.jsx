@@ -10,14 +10,14 @@ export default function Sidebar({ activeTab, onChange }) {
   return (
     <aside className="sidebar">
       <div className="sidebarBrand">
-        <img src="/src/assets/logo.png" alt="Jal Drishti logo" />
+        <img src="/assets/logo.png" alt="Jal Drishti logo" />
         <div>
           <div className="brandTitle">Jal Drishti</div>
           <div className="brandSub">Water Intelligence</div>
         </div>
       </div>
 
-<hr className="divider"></hr>
+      <hr className="divider"></hr>
 
       <div className="sidebarTabs">
         {tabs.map((t) => (
