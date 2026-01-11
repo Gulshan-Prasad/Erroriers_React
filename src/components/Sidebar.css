@@ -1,7 +1,7 @@
 .sidebar {
   width: 260px;
-  background: var(--panel);
-  border-right: 1px solid var(--border);
+  background: linear-gradient(180deg, #0b1220 0%, #0f1b34 100%);
+  border-right: 1px solid rgba(255,255,255,0.08);
   padding: 16px;
   min-height: 100vh;
   box-sizing: border-box;
@@ -11,7 +11,7 @@
   margin: 0 0 14px 0;
   font-size: 18px;
   font-weight: 700;
-  color: #0f172a;
+  color: #9ca3af;
 }
 
 .sidebarTabs {
@@ -31,15 +31,18 @@
   font-size: 14px;
   color: #0f172a;
   transition: background 0.15s ease, border 0.15s ease, transform 0.05s ease;
+  color: #cbd5f5;
 }
-
 .sidebarBtn:hover {
-  background: #f1f5f9;
+  background: rgba(59, 130, 246, 0.15);
 }
 
-.sidebarBtn:active {
-  transform: scale(0.99);
+.sidebarBtn.active {
+  background: linear-gradient(90deg, #2563eb, #1d4ed8);
+  border-color: transparent;
+  color: white;
 }
+
 
 .sidebarBtn.active {
   background: rgba(37, 99, 235, 0.12);
@@ -48,7 +51,6 @@
   font-weight: 700;
 }
 
-/* Responsive: sidebar becomes top bar */
 @media (max-width: 900px) {
   .sidebar {
     width: 100%;

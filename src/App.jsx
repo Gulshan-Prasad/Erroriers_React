@@ -3,6 +3,7 @@ import Sidebar from "./components/Sidebar";
 import MapView from "./components/MapView";
 import "./App.css";
 import "./components/MapView.css";
+import { averageGeoJsonProperty, preparednessIndex } from "./utils/functions";
 import WeatherCard from "./components/WeatherCard.jsx";
 
 export default function App() {
@@ -20,13 +21,18 @@ export default function App() {
 
   const [insights, setInsights] = useState([]);
   const [loadingInsights, setLoadingInsights] = useState(false);
+  const [reports, setReports] = useState([]);
 
   const [weatherCoords, setWeatherCoords] = useState(null);
 
   useEffect(() => {
-    fetch("/data/water_logging_spots.json")
+    fetch("/data/wards_with_risk.geojson")
       .then((res) => res.json())
-      .then(setZones);
+      .then((geojson) => {
+        const wardObjects = geojson.features
+          .map((f) => f.properties)
+        setWardObjects(wardObjects)
+      });
 
     fetch("/data/wards_with_risk.geojson")
       .then((res) => res.json())
@@ -43,7 +49,6 @@ export default function App() {
     if (!activeWard) return;
 
     setLoadingInsights(true);
-    console.log(activeWard);
 
     fetch("http://localhost:3001/api/insights", {
       method: "POST",
@@ -67,15 +72,50 @@ export default function App() {
   );
 
   const submitReport = () => {
-    if (!selectedWard || !description) return;
+  if (!selectedWard || !description) return;
 
-    alert("Report submitted successfully");
-    setSelectedWard("");
-    setWardQuery("");
-    setSeverity("LOW");
-    setDescription("");
-  };
+  setReports((prev) => [
+    {
+      id: Date.now(),
+      ward: selectedWard,
+      severity,
+      status: "Pending",
+      time: new Date().toLocaleString()
+    },
+    ...prev
+  ]);
 
+  alert("Report submitted successfully");
+
+  setSelectedWard("");
+  setWardQuery("");
+  setSeverity("LOW");
+  setDescription("");
+};
+
+  useEffect(() => {
+    console.log("activeWard:", activeWard);
+  }, [activeWard]);
+
+  useEffect(() => {
+    console.log("wardObjects:", wardObjects);
+  }, [wardObjects]);
+
+  useEffect(() => {
+    console.log("wardQuery:", filteredWardObjects);
+  }, [filteredWardObjects]);
+
+  const avgRisk = Math.floor(wardObjects.reduce((sum, w) => sum + (Number(w.composite_risk_score_100) || 0), 0)/ wards.length);
+
+  const avgRainfall = Math.floor(wardObjects.reduce((sum, w) => sum +(Number(w.ward_rainfall_avg_rainfall_mm) || 0), 0)/ wards.length)
+
+  const criticalWards = wardObjects.filter(
+  (w) => Number(w.composite_risk_score_100) > 75
+).length;
+
+  const prepIndex = preparednessIndex(wardObjects)
+
+  console.log(prepIndex)
   return (
     <div className="app">
       <Sidebar activeTab={activeTab} onChange={setActiveTab} />
@@ -83,15 +123,66 @@ export default function App() {
       <main className="main">
         <h1 className="page-title">Urban Waterlogging Dashboard</h1>
 
-        {/* ---------------- HOME TAB ---------------- */}
         {activeTab === "home" && (
           <>
-            <div className="card mb-6 card-text">
-              This portal allows citizens to report urban waterlogging, track
-              complaints, and review historical waterlogging patterns across
-              Delhi wards.
-            </div>
+            <div className="statsGrid">
+              <div className="statCard">
+                <div className="statLabel">Average WLPI</div>
+                <div className="statValue">{avgRisk}</div>
+                {/* <div className="statSub red">↑ 2.4%</div> */}
+              </div>
 
+              <div className="statCard">
+                <div className="statLabel">Critical Wards</div>
+                <div className="statValue">{criticalWards}</div>
+                {/* <div className="statSub">Needs attention</div> */}
+              </div>
+
+              <div className="statCard">
+                <div className="statLabel">Avg Rainfall (june-aug)</div>
+                <div className="statValue">{avgRainfall} mm</div>
+                {/* <div className="statSub">Forecast: 0mm</div> */}
+              </div>
+
+              <div className="statCard">
+                <div className="statLabel">Preparedness (0-100)</div>
+                <div className="statValue green">{prepIndex}</div>
+                {/* <div className="statSub green">↑ 5%</div> */}
+              </div>
+            </div>
+<div className="ward-search-wrapper">
+            <input
+                value={wardQuery}
+                onChange={(e) => {
+                  setWardQuery(e.target.value);
+                  setSelectedWard("");
+                }}
+                placeholder="Search ward"
+                className="input mb-2"
+                style={{width: 500,
+                  position: "relative"
+                }}
+              />
+
+{wardQuery && (
+                <div className="dropdown"
+                      style={{position:"absolute"}}
+                >
+                  {filteredWardObjects.map((ward) => (
+                    <div
+                      key={ward.Ward_No}
+                      onClick={() => {
+                        setActiveWard(ward)
+                        setWardQuery("")
+                      }}
+                      className="dropdown-item"
+                    >
+                      {ward.WardName}
+                    </div>
+                  ))}
+                </div>
+              )}
+</div>
             <div className="map-wrapper">
               <MapView
                 zones={zones}
@@ -136,16 +227,12 @@ export default function App() {
                 const MAX_RISK = 100;
                 const risk = Number(activeWard.composite_risk_score_100 || 0)
                 const pop = Number(activeWard.TotalPop || 0);
-                const percent = Math.min((pop / MAX_POP) * 100, 100);
-                const riskPercent = Math.min((risk / MAX_RISK) * 100, 100)
+                const popPercent = Math.min((pop / MAX_POP) * 100, 100);
+                const percent = Math.min((risk / MAX_RISK) * 100, 100)
 
 
                 const barClass =
-                  percent >= 80
-                    ? "fill-red"
-                    : percent >= 50
-                      ? "fill-orange"
-                      : "fill-green";
+                  percent >= 80 ? "fill-red" : percent >= 60 ? "fill-orange" : percent >=40? "fill-yellow" : "fill-green";
 
                 return (
                   <div className="card mb-4">
@@ -158,7 +245,7 @@ export default function App() {
                         <div className="info-label">Drain score</div>
                         <div className="info-value">{activeWard.drain_score * 10}</div>
                         <div className="info-label">Drain density</div>
-                        <div className="info-value">{activeWard.drain_density * 1000}</div>
+                        <div className="info-value">{(activeWard.drain_density * 1000).toPrecision(4)} km/km^2</div>
                       </div>
 
                       <div>
@@ -166,14 +253,14 @@ export default function App() {
                         <div className="info-value">{activeWard.WardName}</div>
                       </div>
 
-                      {/* Population Bar */}
-                      <div style={{ gridColumn: "1 / -1" }}>
-                        <div className="pop-row">
-                          <span>Population</span>
-                          <strong>
-                            {pop.toLocaleString()} / {MAX_POP.toLocaleString()}
-                          </strong>
-                        </div>
+                  {/* <div style={{ gridColumn: "1 / -1" }}>
+                    <div className="pop-row">
+                      <span>Population</span>
+                      <strong>
+                        {Number(activeWard.TotalPop || 0).toLocaleString()} /
+                        100,000
+                      </strong>
+                    </div>
 
                         <div className="progress-bg">
                           <div
@@ -181,7 +268,7 @@ export default function App() {
                             style={{ width: `${percent}%` }}
                           />
                         </div>
-                      </div>
+                      </div> */}
                       <div style={{ gridColumn: "1 / -1" }}>
                         <div className="risk-row">
                           <span>Risk</span>
@@ -193,7 +280,7 @@ export default function App() {
                         <div className="progress-bg">
                           <div
                             className={`progress-fill ${barClass}`}
-                            style={{ width: `${riskPercent}%` }}
+                            style={{ width: `${percent}%` }}
                           />
                         </div>
                       </div>
@@ -204,38 +291,57 @@ export default function App() {
           </>
         )}
 
-        {/* ---------------- REPORT TAB ---------------- */}
         {activeTab === "report" && (
           <div className="grid-2">
             <div className="card">
               <h2 className="section-title">Submit Waterlogging Report</h2>
 
-              <input
-                value={wardQuery}
-                onChange={(e) => {
-                  setWardQuery(e.target.value);
-                  setSelectedWard("");
-                }}
-                placeholder="Search ward"
-                className="input mb-2"
-              />
+              <div className="inputWrap">
+                <span className="searchIcon">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                </span>
 
-              {wardQuery && (
-                <div className="dropdown">
-                  {filteredWards.map((ward) => (
-                    <div
-                      key={ward}
-                      onClick={() => {
-                        setSelectedWard(ward);
-                        setWardQuery(ward);
-                      }}
-                      className="dropdown-item"
-                    >
-                      {ward}
-                    </div>
-                  ))}
-                </div>
-              )}
+                <input
+                  className="input input-with-icon"
+                  value={wardQuery}
+                  onChange={(e) => {
+                    setWardQuery(e.target.value);
+                    setSelectedWard("");
+                  }}
+                  placeholder="Search ward"
+                />
+
+                {wardQuery &&
+                  filteredWards.length > 0 &&
+                  !filteredWards.includes(wardQuery) && (
+                  <div className="dropdown">
+                    {filteredWards.map((ward) => (
+                      <div
+                        key={ward}
+                        className="dropdown-item"
+                        onClick={() => {
+                          setSelectedWard(ward);
+                          setWardQuery(ward);
+                        }}
+                      >
+                        {ward}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
 
               <select
                 value={severity}
@@ -261,7 +367,34 @@ export default function App() {
 
             <div className="card">
               <h2 className="section-title">Active Reports</h2>
-              <p className="text-muted">No active reports submitted yet.</p>
+              {reports.length === 0 ? (
+                <p className="text-muted">No active reports submitted yet.</p>
+               ) : (
+                 reports.map((r) => (
+                   <div key={r.id} className="card mb-3">
+                     <div className="section-title">{r.ward}</div>
+
+                     <div className="grid-info">
+                       <div>
+                         <div className="info-label">Severity</div>
+                         <div className={`info-value severity-${r.severity.toLowerCase()}`}>
+                           {r.severity}
+                         </div>
+                       </div>
+
+                       <div>
+                         <div className="info-label">Status</div>
+                         <div className={`info-value status-${r.status.toLowerCase()}`}>
+                           {r.status}
+                         </div>
+                       </div>
+                     </div>
+
+                     <div className="text-muted">{r.time}</div>
+                   </div>
+                 ))
+               )}
+
             </div>
           </div>
         )}
@@ -277,7 +410,6 @@ export default function App() {
 
           </div>
         )}
-
       </main>
     </div>
   );
