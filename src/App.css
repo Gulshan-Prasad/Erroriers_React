@@ -10,9 +10,9 @@
 }
 
 .page-title {
-  font-size: 24px;
+  font-size: 30px;
   font-weight: 650;
-  margin-bottom: 16px;
+  margin-bottom: -15px;
   color: #0f172a;
 }
 
@@ -46,6 +46,27 @@
   padding: 18px;
 }
 
+.WardCard {
+  display: flex;
+  gap: 14px;              /* normal gap */
+  align-items: flex-start;
+  width: 100%;
+}
+
+.InfoCard {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  flex: 1;                /* left takes 50% */
+  min-width: 0;
+}
+
+.WardCard > :last-child {
+  flex: 1;                /* right takes 50% */
+  min-width: 0;
+}
+
 .card.no-padding {
   padding: 0;
 }
@@ -64,8 +85,6 @@
 }
 
 .map-wrapper {
-  background: var(--panel);
-  border: 1px solid var(--border);
   border-radius: 14px;
   overflow: hidden;
   margin-bottom: 16px;
@@ -334,7 +353,7 @@
   display: flex;
   flex-direction: column;
   /* justify-content: space-around; */
-  min-height: 140px;
+  min-height: 120px;
 }
 .statLabel {
   font-size: 13px;
@@ -348,7 +367,7 @@
 }
 
 .statSub {
-  font-size: 12px;
+  font-size: 16px;
   color: var(--muted);
   margin-top: 6px;
 }

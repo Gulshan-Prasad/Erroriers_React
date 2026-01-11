@@ -1,0 +1,149 @@
+.riskCard {
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+  max-width: fit-content;
+  justify-self: right;
+}
+
+.riskHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.riskTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.riskBadge {
+  font-size: 12px;
+  font-weight: 900;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.18);
+}
+
+/* Bars */
+.riskBars {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 10px 6px 2px 6px;
+  margin-bottom: 18px;
+}
+
+.riskBarItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.riskBarTrack {
+  width: 100%;
+  height: 170px;
+  border-radius: 14px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(2, 6, 23, 0.03);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+.riskBar {
+  width: 100%;
+  border-radius: 14px;
+}
+
+.riskBarLabel {
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+}
+
+/* Colors */
+.barLow {
+  background: #22c55e;
+}
+.barMedium {
+  background: #eab308;
+}
+.barHigh {
+  background: #f97316;
+}
+.barCritical {
+  background: #ef4444;
+}
+
+/* Legend */
+.riskLegend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.legendRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.legendLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.legendDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+}
+
+.dotLow {
+  background: #22c55e;
+}
+.dotMedium {
+  background: #eab308;
+}
+.dotHigh {
+  background: #f97316;
+}
+.dotCritical {
+  background: #ef4444;
+}
+
+.legendText {
+  font-size: 14px;
+  font-weight: 800;
+  color: #334155;
+}
+
+.legendRight {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  color: #0f172a;
+}
+
+.legendRight b {
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.legendSub {
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+}
