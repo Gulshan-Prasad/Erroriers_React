@@ -278,9 +278,9 @@ export default function App() {
                       </div> */}
                       <div style={{ gridColumn: "1 / -1" }}>
                         <div className="risk-row">
-                          <span>Risk</span>
+                          <span>WLPI</span>
                           <strong>
-                            {risk.toLocaleString()} / {MAX_RISK.toLocaleString()}
+                            {risk.toPrecision(4).toLocaleString()} / {MAX_RISK.toLocaleString()}
                           </strong>
                         </div>
 

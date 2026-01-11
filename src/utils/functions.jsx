@@ -47,9 +47,9 @@ export function preparednessIndex(features) {
 
     // preparedness formula
     const preparedness =
-      0.45 * drainScore +
-      0.25 * normDrainDensity -
-      0.20 * normPopulation -
+      0.50 * drainScore +
+      0.30 * normDrainDensity -
+      0.10 * normPopulation -
       0.10 * risk;
 
     return sum + clamp01(preparedness);

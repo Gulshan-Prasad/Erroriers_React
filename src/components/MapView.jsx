@@ -169,23 +169,22 @@ console.log("MapView render, activeWard:", activeWard);
 
                     const target = e.target;
 
-                                    target.setStyle({
-                                        fillColor,
-                                        fillOpacity: 0.25,
-                                        color: "#000000",
-                                        weight: 1,
-                                    });
-                                },
-
-                                click: (e) => {
-                                    setSelectedId(id);
-                                    onWardSelect?.(feature.properties);
-
-                    e.target.setStyle({
-                    fillColor,
-                    fillOpacity: 0.45,
-                    weight: 2,
+                    target.setStyle({
+                        fillColor,
+                        fillOpacity: 0.25,
+                        weight: 1,
                     });
+                },
+
+                click: (e) => {
+                    setSelectedId(id);
+                    onWardSelect?.(feature.properties);
+
+                  e.target.setStyle({
+                  fillColor,
+                  fillOpacity: 0.45,
+                  weight: 2,
+                  });
                 },
                 });
             }}
