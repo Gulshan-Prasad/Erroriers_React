@@ -114,10 +114,12 @@ console.log("MapView render, activeWard:", activeWard);
             data={wards}
             pane="wards"
             interactive={true}
+            keyboard={false}
             style={(feature) => {
               const id = Number(feature?.properties?.Ward_No);
               const pop = Number(feature?.properties?.TotalPop || 0);
               const risk = Number(feature?.properties?.composite_risk_score_100 || 0);
+              const wardName = feature?.properties?.WardName;
               // const fillColor = getPopColor(pop);
               const fillColor = getRiskColor(risk)
               if (id === selectedId) {
@@ -140,15 +142,20 @@ console.log("MapView render, activeWard:", activeWard);
               const id = Number(feature?.properties?.Ward_No);
               const pop = Number(feature?.properties?.TotalPop || 0);
               const risk = Number(feature?.properties?.composite_risk_score_100 || 0);
+              const wardName = feature?.properties?.WardName;
               // const fillColor = getPopColor(pop);
               const fillColor = getRiskColor(risk)
 
-                            wardLayersRef.current.push({
-                                id,
-                                layer,
-                                feature,
-                            });
-
+                wardLayersRef.current.push({
+                    id,
+                    layer,
+                    feature,
+                });
+                layer.bindTooltip("📍"+wardName, {
+                  sticky: false,
+                  direction: "top",
+                  className: "ward-tooltip"
+                });
                 layer.on({
                 mouseover: (e) => {
                     if (id === selectedId) return;

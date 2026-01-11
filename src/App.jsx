@@ -4,6 +4,12 @@ import MapView from "./components/MapView";
 import "./App.css";
 import "./components/MapView.css";
 import RiskDistribution from "./components/RiskDistribution";
+import {
+  Gauge,
+  AlertTriangle,
+  CloudRain,
+  Droplets
+} from "lucide-react";
 
 import { averageGeoJsonProperty, preparednessIndex } from "./utils/functions";
 import WeatherCard from "./components/WeatherCard.jsx";
@@ -144,30 +150,58 @@ export default function App() {
             </div>
             <div className="statsGrid">
               <div className="statCard">
+                <div className="statIconFloating risk">
+                  <Gauge size={22} />
+                </div>
                 <div className="statLabel">Average WLPI</div>
                 <div className="statValue">{avgRisk}</div>
-                {/* <div className="statSub red">↑ 2.4%</div> */}
               </div>
 
+              {/* Critical Wards */}
               <div className="statCard">
+                <div className="statIconFloating alert">
+                  <AlertTriangle size={22} />
+                </div>
                 <div className="statLabel">Critical Wards</div>
                 <div className="statValue">{criticalWards}</div>
-                {/* <div className="statSub">Needs attention</div> */}
               </div>
 
+              {/* Avg Rainfall */}
               <div className="statCard">
-                <div className="statLabel">Avg Rainfall (june-aug)</div>
+                <div className="statIconFloating rain">
+                  <CloudRain size={22} />
+                </div>
+                <div className="statLabel">Avg Rainfall (June–Aug)</div>
                 <div className="statValue">{avgRainfall} mm</div>
-                {/* <div className="statSub">Forecast: 0mm</div> */}
               </div>
 
+              {/* Avg Drain Score */}
               <div className="statCard">
-                <div className="statLabel">Avg Drain Score (0-10)</div>
+                <div className="statIconFloating drain">
+                  <Droplets size={22} />
+                </div>
+                <div className="statLabel">Avg Drain Score (0–10)</div>
                 <div className="statValue green">{drainIndex}</div>
-                {/* <div className="statSub green">↑ 5%</div> */}
               </div>
             </div>
-            <div className="ward-search-wrapper">
+
+
+            <div className="inputWrap">
+              <span className="searchIcon">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+              </span>
               <input
                 value={wardQuery}
                 onChange={(e) => {
@@ -175,7 +209,7 @@ export default function App() {
                   setSelectedWard("");
                 }}
                 placeholder="Search ward"
-                className="input mb-2"
+                className="input mb-2 input-with-icon"
                 style={{
                   width: 500,
                   position: "relative"

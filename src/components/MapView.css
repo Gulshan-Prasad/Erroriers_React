@@ -4,8 +4,23 @@
   align-items: stretch;
   width: 100%;
 }
+.ward-tooltip{
+  pointer-events: none;
+  user-select: none;
+}
 
-/* Map should take left half */
+.leaflet-interactive {
+  outline: none !important;
+}
+
+.leaflet-pane svg {
+  outline: none !important;
+}
+
+.leaflet-interactive:focus {
+  outline: none !important;
+}
+
 .map-wrapper .leaflet-container {
   flex: 1;
   height: 420px;

@@ -7,6 +7,10 @@
   box-sizing: border-box;
 }
 
+.divider{
+  border: none; 
+  border-top: 1px solid rgb(179, 179, 179);
+}
 .sidebarTitle {
   margin: 0 0 14px 0;
   font-size: 18px;

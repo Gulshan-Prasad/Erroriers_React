@@ -17,6 +17,7 @@ export default function Sidebar({ activeTab, onChange }) {
         </div>
       </div>
 
+<hr className="divider"></hr>
 
       <div className="sidebarTabs">
         {tabs.map((t) => (

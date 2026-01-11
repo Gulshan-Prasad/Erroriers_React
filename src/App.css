@@ -241,6 +241,7 @@
   font-size: 14px;
   color: #64748b;
   pointer-events: none;
+  z-index: 101;
 }
 
 .ward-search-wrapper {
@@ -411,7 +412,7 @@
   padding: 22px;
   display: flex;
   flex-direction: column;
-  /* justify-content: space-around; */
+  position: relative;
   min-height: 120px;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
@@ -436,14 +437,40 @@
   color: var(--muted);
   margin-top: 6px;
 }
-.statIcon {
+
+.statIconFloating {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+
   width: 44px;
   height: 44px;
-  border-radius: 12px;
+  border-radius: 14px;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  align-self: flex-end;
+}
+
+.statIconFloating.risk {
+background: rgba(234, 179, 8, 0.15); /* soft yellow */
+color: #a16207;                     /* dark amber */
+
+}
+
+.statIconFloating.alert {
+  background: rgba(185, 28, 28, 0.10);
+  color: #b91c1c;
+}
+
+.statIconFloating.rain {
+  background: rgba(37, 99, 235, 0.10);
+  color: #2563eb;
+}
+
+.statIconFloating.drain {
+  background: rgba(21, 128, 61, 0.10);
+  color: #15803d;
 }
 
 .icon-blue {
