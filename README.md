@@ -1,7 +1,6 @@
 # Delhi Ward Waterlogging Risk Predictor (MVP)
 
-*Erroriers_React* – A hackathon prototype for predicting waterlogging/flood risk at the ward level in Delhi using geospatial data and a weighted scoring model. Built in ~3 days for a working MVP.
-
+*Jaldrishti* – A hackathon prototype for predicting waterlogging/flood risk at the ward level in Delhi using geospatial data and a weighted scoring model.
 ## Project Overview
 
 This MVP uses publicly available GIS data to compute a *per-ward risk score* for waterlogging/flooding in Delhi. Key factors include:
@@ -95,8 +94,12 @@ All data processed and normalized in QGIS for accuracy and compatibility.
 
 ## Installation & Running Locally
 
-1. Clone the repo:
-
-bash
+```bash
 git clone https://github.com/Gulshan-Prasad/Erroriers_React.git
 cd Erroriers_React
+npm i
+cd server
+npm i
+cd ..
+npm run server
+```
